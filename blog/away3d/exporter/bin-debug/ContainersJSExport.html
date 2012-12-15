@@ -1,0 +1,175 @@
+<!-- 
+Works with three.js revision 49-11.
+Open a text editor and save this as a html file (e.g. "export.html"). Run the html in the Google Chrome browser and your scene will appear. Make sure you have an Internet connection so JS resources can be loaded.
+-->
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>three.js webgl export from Away3D</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000;
+				margin: 0px;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+
+		<script src="https://raw.github.com/mrdoob/three.js/r49/build/Three.js"></script>
+		<script src="https://raw.github.com/mrdoob/three.js/master/examples/js/Detector.js"></script>
+		<script src="https://raw.github.com/mrdoob/three.js/r49/examples/js/Stats.js"></script>
+
+		<script>
+
+			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+			var container, stats;
+
+			var camera, scene, renderer;
+
+			var mouseDown = false;
+			var mouseX = 0, mouseY = 0;
+			var windowHalfX = window.innerWidth / 2;
+			var windowHalfY = window.innerHeight / 2;
+
+			init();
+			animate();
+
+			function init() {
+
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				document.addEventListener('mousedown', onDocumentMouseDown, false);
+				document.addEventListener('mouseup', onDocumentMouseUp, false);
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				scene = new THREE.Scene();
+
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
+				camera.position.x = 800;
+				camera.position.y = 800;
+				camera.position.z = 800;
+				scene.add( camera );
+
+				var geometries = [];
+				var materials = [];
+				var lights = [];
+				var cameras = [];
+				var containers = [];
+				var meshes = [];
+				var wireframes = [];
+				var segmentSets = [];
+
+				// Geometries
+				var cylindergeometry0 = new THREE.CylinderGeometry(50,50,100,16,1,false);
+				geometries.push(cylindergeometry0);
+
+				var cubegeometry1 = new THREE.CubeGeometry(100,100,100,1,1,1);
+				geometries.push(cubegeometry1);
+
+				var conegeometry2 = new THREE.CylinderGeometry(0,50,100,16,1,false);
+				geometries.push(conegeometry2);
+
+				// Materials
+				var colormaterial0 = new THREE.MeshLambertMaterial( { color: 0x88e79e, overdraw: true } );
+				materials.push(colormaterial0);
+
+				// Containers
+				var objectcontainer3d0 = new THREE.Object3D();
+				objectcontainer3d0.position.set(100,0,0);
+				containers.push(objectcontainer3d0);
+				scene.add(objectcontainer3d0);
+
+				var objectcontainer3d1 = new THREE.Object3D();
+				objectcontainer3d1.position.set(0,100,0);
+				containers.push(objectcontainer3d1);
+				containers[0].add(objectcontainer3d1);
+
+				var objectcontainer3d2 = new THREE.Object3D();
+				objectcontainer3d2.position.set(0,0,100);
+				containers.push(objectcontainer3d2);
+				containers[1].add(objectcontainer3d2);
+
+				// Lights
+				var directionallight0 = new THREE.DirectionalLight(0xffffff);
+				directionallight0.rotation.set(65,25,0);
+				directionallight0.position.set(1,0.5,0.5);
+				lights.push(directionallight0);
+				scene.add(directionallight0);
+
+				// Meshes
+				var mesh0 = new THREE.Mesh(geometries[0], materials[0]);
+				mesh0.position.set(75,0,0);
+				meshes.push(mesh0);
+				containers[2].add(mesh0);
+
+				var mesh1 = new THREE.Mesh(geometries[1], materials[0]);
+				mesh1.position.set(-75,0,0);
+				meshes.push(mesh1);
+				containers[1].add(mesh1);
+
+				var mesh2 = new THREE.Mesh(geometries[2], materials[0]);
+				mesh2.position.set(-225,0,0);
+				meshes.push(mesh2);
+				containers[0].add(mesh2);
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				container.appendChild( renderer.domElement );
+
+				stats = new Stats();
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				container.appendChild( stats.domElement );
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				render();
+				stats.update();
+
+			}
+
+			function onDocumentMouseDown(event) {
+				mouseDown = true;
+			}
+
+			function onDocumentMouseUp(event) {
+				mouseDown = false;
+			}
+
+			function onDocumentMouseMove(event) {
+
+				if ( mouseDown ) {
+					mouseX = event.clientX - windowHalfX;
+					mouseY = event.clientY - windowHalfY;
+				}
+
+			}
+
+			function render() {
+
+				if ( mouseX && mouseY ) {
+					camera.position.x += ( mouseX*2 - camera.position.x ) * 0.05;
+					camera.position.y += ( - mouseY*6 - camera.position.y ) * 0.05;
+				}
+
+				camera.lookAt( scene.position );
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+	</body>
+</html>

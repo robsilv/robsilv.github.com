@@ -1,0 +1,300 @@
+<!-- 
+Works with three.js revision 49-11.
+Open a text editor and save this as a html file (e.g. "export.html"). Run the html in the Google Chrome browser and your scene will appear. Make sure you have an Internet connection so JS resources can be loaded.
+-->
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>three.js webgl export from Away3D</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000;
+				margin: 0px;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+
+		<script src="https://raw.github.com/mrdoob/three.js/r49/build/Three.js"></script>
+		<script src="https://raw.github.com/mrdoob/three.js/master/examples/js/Detector.js"></script>
+		<script src="https://raw.github.com/mrdoob/three.js/r49/examples/js/Stats.js"></script>
+
+		<script>
+
+			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+			var container, stats;
+
+			var camera, scene, renderer;
+
+			var mouseDown = false;
+			var mouseX = 0, mouseY = 0;
+			var windowHalfX = window.innerWidth / 2;
+			var windowHalfY = window.innerHeight / 2;
+
+			init();
+			animate();
+
+			function init() {
+
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				document.addEventListener('mousedown', onDocumentMouseDown, false);
+				document.addEventListener('mouseup', onDocumentMouseUp, false);
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				scene = new THREE.Scene();
+
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
+				camera.position.x = 800;
+				camera.position.y = 800;
+				camera.position.z = 800;
+				scene.add( camera );
+
+				var geometries = [];
+				var materials = [];
+				var lights = [];
+				var cameras = [];
+				var containers = [];
+				var meshes = [];
+				var wireframes = [];
+				var segmentSets = [];
+
+				// Lights
+				var directionallight0 = new THREE.DirectionalLight(0xffffff);
+				directionallight0.rotation.set(65,25,0);
+				directionallight0.position.set(1,0.5,0.5);
+				lights.push(directionallight0);
+				scene.add(directionallight0);
+
+				// SegmentSets
+				var geo0 = new THREE.Geometry();
+				geo0.vertices.push( new THREE.Vector3(-925,212,398) );
+				geo0.vertices.push( new THREE.Vector3(-1381,169,-174) );
+				geo0.vertices.push( new THREE.Vector3(-1143,378,214) );
+				geo0.vertices.push( new THREE.Vector3(-1291,-145,-320) );
+				geo0.vertices.push( new THREE.Vector3(-1195,-85,-409) );
+				geo0.vertices.push( new THREE.Vector3(-1027,-330,-309) );
+				geo0.vertices.push( new THREE.Vector3(-1154,-134,-408) );
+				geo0.vertices.push( new THREE.Vector3(-1024,-21,-454) );
+				geo0.vertices.push( new THREE.Vector3(-753,307,-217) );
+				geo0.vertices.push( new THREE.Vector3(-720,358,-28) );
+				geo0.vertices.push( new THREE.Vector3(-710,214,-274) );
+				geo0.vertices.push( new THREE.Vector3(-615,226,-82) );
+				geo0.vertices.push( new THREE.Vector3(-1232,263,290) );
+				geo0.vertices.push( new THREE.Vector3(-1418,173,-57) );
+				geo0.vertices.push( new THREE.Vector3(-1128,428,-99) );
+				geo0.vertices.push( new THREE.Vector3(-1286,-340,-112) );
+				geo0.vertices.push( new THREE.Vector3(-565,-99,91) );
+				geo0.vertices.push( new THREE.Vector3(-1277,-215,292) );
+				geo0.vertices.push( new THREE.Vector3(-1221,366,-166) );
+				geo0.vertices.push( new THREE.Vector3(-1072,230,-385) );
+				geo0.vertices.push( new THREE.Vector3(-1115,420,121) );
+				geo0.vertices.push( new THREE.Vector3(-1167,315,-283) );
+				geo0.vertices.push( new THREE.Vector3(-659,136,-265) );
+				geo0.vertices.push( new THREE.Vector3(-1009,-238,-385) );
+				geo0.vertices.push( new THREE.Vector3(-589,-200,-44) );
+				geo0.vertices.push( new THREE.Vector3(-868,272,-335) );
+				geo0.vertices.push( new THREE.Vector3(-1129,-352,-267) );
+				geo0.vertices.push( new THREE.Vector3(-1064,-257,-365) );
+				geo0.vertices.push( new THREE.Vector3(-914,422,152) );
+				geo0.vertices.push( new THREE.Vector3(-1369,227,-127) );
+				geo0.vertices.push( new THREE.Vector3(-720,167,-316) );
+				geo0.vertices.push( new THREE.Vector3(-1317,-330,-40) );
+				geo0.vertices.push( new THREE.Vector3(-1074,-310,321) );
+				geo0.vertices.push( new THREE.Vector3(-1430,121,-85) );
+				geo0.vertices.push( new THREE.Vector3(-776,-388,-78) );
+				geo0.vertices.push( new THREE.Vector3(-624,-20,253) );
+				geo0.vertices.push( new THREE.Vector3(-813,-143,393) );
+				geo0.vertices.push( new THREE.Vector3(-829,259,335) );
+				geo0.vertices.push( new THREE.Vector3(-1358,234,-147) );
+				geo0.vertices.push( new THREE.Vector3(-769,-114,-375) );
+				geo0.vertices.push( new THREE.Vector3(-1080,-217,393) );
+				geo0.vertices.push( new THREE.Vector3(-1033,380,-240) );
+				geo0.vertices.push( new THREE.Vector3(-872,54,429) );
+				geo0.vertices.push( new THREE.Vector3(-1223,395,51) );
+				geo0.vertices.push( new THREE.Vector3(-1194,242,338) );
+				geo0.vertices.push( new THREE.Vector3(-1404,-190,-92) );
+				geo0.vertices.push( new THREE.Vector3(-691,102,-311) );
+				geo0.vertices.push( new THREE.Vector3(-1258,-277,261) );
+				geo0.vertices.push( new THREE.Vector3(-785,311,-261) );
+				geo0.vertices.push( new THREE.Vector3(-1117,250,-358) );
+
+				var segmentset0 = new THREE.Line( geo0, new THREE.LineBasicMaterial( { color: 0xff0000 } ) );
+				segmentSets.push(segmentset0);
+				scene.add(segmentset0);
+
+				var geo1 = new THREE.Geometry();
+				geo1.vertices.push( new THREE.Vector3(-115,119,424) );
+				geo1.vertices.push( new THREE.Vector3(285,-216,-288) );
+				geo1.vertices.push( new THREE.Vector3(-294,-206,-280) );
+				geo1.vertices.push( new THREE.Vector3(410,-33,-205) );
+				geo1.vertices.push( new THREE.Vector3(34,-24,-450) );
+				geo1.vertices.push( new THREE.Vector3(-118,233,369) );
+				geo1.vertices.push( new THREE.Vector3(325,90,297) );
+				geo1.vertices.push( new THREE.Vector3(198,-132,384) );
+				geo1.vertices.push( new THREE.Vector3(272,238,-283) );
+				geo1.vertices.push( new THREE.Vector3(24,-338,-305) );
+				geo1.vertices.push( new THREE.Vector3(35,-393,-228) );
+				geo1.vertices.push( new THREE.Vector3(-342,-304,35) );
+				geo1.vertices.push( new THREE.Vector3(167,419,2) );
+				geo1.vertices.push( new THREE.Vector3(-241,160,-350) );
+				geo1.vertices.push( new THREE.Vector3(332,281,143) );
+				geo1.vertices.push( new THREE.Vector3(-410,-121,156) );
+				geo1.vertices.push( new THREE.Vector3(214,54,-401) );
+				geo1.vertices.push( new THREE.Vector3(-312,-245,-218) );
+				geo1.vertices.push( new THREE.Vector3(-394,-147,180) );
+				geo1.vertices.push( new THREE.Vector3(-239,246,-300) );
+				geo1.vertices.push( new THREE.Vector3(286,-123,-336) );
+				geo1.vertices.push( new THREE.Vector3(-131,-274,337) );
+				geo1.vertices.push( new THREE.Vector3(-315,333,-40) );
+				geo1.vertices.push( new THREE.Vector3(-133,-398,-182) );
+				geo1.vertices.push( new THREE.Vector3(-407,-35,210) );
+				geo1.vertices.push( new THREE.Vector3(170,388,-163) );
+				geo1.vertices.push( new THREE.Vector3(366,277,5) );
+				geo1.vertices.push( new THREE.Vector3(71,-318,-321) );
+				geo1.vertices.push( new THREE.Vector3(261,-321,-199) );
+				geo1.vertices.push( new THREE.Vector3(-108,70,-438) );
+				geo1.vertices.push( new THREE.Vector3(227,-374,-112) );
+				geo1.vertices.push( new THREE.Vector3(248,383,-24) );
+				geo1.vertices.push( new THREE.Vector3(308,113,-322) );
+				geo1.vertices.push( new THREE.Vector3(-348,151,-249) );
+				geo1.vertices.push( new THREE.Vector3(146,396,162) );
+				geo1.vertices.push( new THREE.Vector3(-69,351,273) );
+				geo1.vertices.push( new THREE.Vector3(244,-276,-259) );
+				geo1.vertices.push( new THREE.Vector3(-97,-422,-129) );
+				geo1.vertices.push( new THREE.Vector3(-149,421,-96) );
+				geo1.vertices.push( new THREE.Vector3(401,91,191) );
+				geo1.vertices.push( new THREE.Vector3(-76,-259,-368) );
+				geo1.vertices.push( new THREE.Vector3(3,370,271) );
+				geo1.vertices.push( new THREE.Vector3(-183,153,381) );
+				geo1.vertices.push( new THREE.Vector3(100,-437,-73) );
+				geo1.vertices.push( new THREE.Vector3(231,-234,-320) );
+				geo1.vertices.push( new THREE.Vector3(-4,172,-424) );
+				geo1.vertices.push( new THREE.Vector3(226,278,-276) );
+				geo1.vertices.push( new THREE.Vector3(-179,-305,290) );
+				geo1.vertices.push( new THREE.Vector3(-41,288,343) );
+				geo1.vertices.push( new THREE.Vector3(330,313,19) );
+
+				var segmentset1 = new THREE.Line( geo1, new THREE.LineBasicMaterial( { color: 0xff00 } ) );
+				segmentSets.push(segmentset1);
+				scene.add(segmentset1);
+
+				var geo2 = new THREE.Geometry();
+				geo2.vertices.push( new THREE.Vector3(914,-442,68) );
+				geo2.vertices.push( new THREE.Vector3(612,-122,-208) );
+				geo2.vertices.push( new THREE.Vector3(1349,-290,-38) );
+				geo2.vertices.push( new THREE.Vector3(806,-412,-44) );
+				geo2.vertices.push( new THREE.Vector3(1299,-217,270) );
+				geo2.vertices.push( new THREE.Vector3(691,83,321) );
+				geo2.vertices.push( new THREE.Vector3(1302,223,258) );
+				geo2.vertices.push( new THREE.Vector3(846,386,-181) );
+				geo2.vertices.push( new THREE.Vector3(1216,-238,-329) );
+				geo2.vertices.push( new THREE.Vector3(1051,-226,-394) );
+				geo2.vertices.push( new THREE.Vector3(633,-261,-58) );
+				geo2.vertices.push( new THREE.Vector3(862,430,0) );
+				geo2.vertices.push( new THREE.Vector3(1320,-40,315) );
+				geo2.vertices.push( new THREE.Vector3(1106,-315,304) );
+				geo2.vertices.push( new THREE.Vector3(1456,18,-44) );
+				geo2.vertices.push( new THREE.Vector3(1280,296,209) );
+				geo2.vertices.push( new THREE.Vector3(667,-254,-183) );
+				geo2.vertices.push( new THREE.Vector3(1289,-296,197) );
+				geo2.vertices.push( new THREE.Vector3(653,-151,-251) );
+				geo2.vertices.push( new THREE.Vector3(751,-244,-288) );
+				geo2.vertices.push( new THREE.Vector3(662,-278,-123) );
+				geo2.vertices.push( new THREE.Vector3(543,33,16) );
+				geo2.vertices.push( new THREE.Vector3(1007,384,-248) );
+				geo2.vertices.push( new THREE.Vector3(596,-185,-100) );
+				geo2.vertices.push( new THREE.Vector3(925,-307,321) );
+				geo2.vertices.push( new THREE.Vector3(1326,130,292) );
+				geo2.vertices.push( new THREE.Vector3(772,61,-392) );
+				geo2.vertices.push( new THREE.Vector3(1082,-333,301) );
+				geo2.vertices.push( new THREE.Vector3(826,304,293) );
+				geo2.vertices.push( new THREE.Vector3(1287,-188,300) );
+				geo2.vertices.push( new THREE.Vector3(1133,300,317) );
+				geo2.vertices.push( new THREE.Vector3(855,102,422) );
+				geo2.vertices.push( new THREE.Vector3(1297,95,-330) );
+				geo2.vertices.push( new THREE.Vector3(1200,-223,336) );
+				geo2.vertices.push( new THREE.Vector3(812,406,77) );
+				geo2.vertices.push( new THREE.Vector3(617,-251,-11) );
+				geo2.vertices.push( new THREE.Vector3(1311,257,216) );
+				geo2.vertices.push( new THREE.Vector3(1442,92,-76) );
+				geo2.vertices.push( new THREE.Vector3(745,212,306) );
+				geo2.vertices.push( new THREE.Vector3(1406,177,-122) );
+				geo2.vertices.push( new THREE.Vector3(1208,48,-400) );
+				geo2.vertices.push( new THREE.Vector3(1314,-102,317) );
+				geo2.vertices.push( new THREE.Vector3(719,354,-64) );
+				geo2.vertices.push( new THREE.Vector3(722,269,249) );
+				geo2.vertices.push( new THREE.Vector3(1327,-139,281) );
+				geo2.vertices.push( new THREE.Vector3(820,-81,414) );
+				geo2.vertices.push( new THREE.Vector3(1234,-43,-391) );
+				geo2.vertices.push( new THREE.Vector3(1020,357,-287) );
+				geo2.vertices.push( new THREE.Vector3(1165,-245,344) );
+				geo2.vertices.push( new THREE.Vector3(1167,-188,-374) );
+
+				var segmentset2 = new THREE.Line( geo2, new THREE.LineBasicMaterial( { color: 0xff } ) );
+				segmentSets.push(segmentset2);
+				scene.add(segmentset2);
+
+
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				container.appendChild( renderer.domElement );
+
+				stats = new Stats();
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				container.appendChild( stats.domElement );
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				render();
+				stats.update();
+
+			}
+
+			function onDocumentMouseDown(event) {
+				mouseDown = true;
+			}
+
+			function onDocumentMouseUp(event) {
+				mouseDown = false;
+			}
+
+			function onDocumentMouseMove(event) {
+
+				if ( mouseDown ) {
+					mouseX = event.clientX - windowHalfX;
+					mouseY = event.clientY - windowHalfY;
+				}
+
+			}
+
+			function render() {
+
+				if ( mouseX && mouseY ) {
+					camera.position.x += ( mouseX*2 - camera.position.x ) * 0.05;
+					camera.position.y += ( - mouseY*6 - camera.position.y ) * 0.05;
+				}
+
+				camera.lookAt( scene.position );
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+	</body>
+</html>
