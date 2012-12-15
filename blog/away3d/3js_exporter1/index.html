@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC
+        "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <title>Primitives Test Scene</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+
+    
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript">
+        var swfVersionStr = "10.0.0";
+        var xiSwfUrlStr = "playerProductInstall.swf";
+        var flashvars = {};
+        var params = {};
+        params.quality = "high";
+        params.allowscriptaccess = "always";
+        params.allowfullscreen = "true";
+        params.wmode = "transparent";
+        var attributes = {};
+        attributes.id = "mainSwf";
+        attributes.name = "mainSwf";
+        attributes.align = "middle";
+        
+        swfobject.embedSWF("PrimitivesTestScene.swf", "flashContainer", "800", "600",
+        swfVersionStr, xiSwfUrlStr, flashvars, params, attributes);
+
+        swfobject.createCSS("#flashContainer", "display:block;");
+    </script>
+</head>
+<body>
+
+<div id="container" style="position:relative;min-height:600px;min-width:1000px;width:100%;height:100%;">
+    <div id="flashContainer">
+        <div id="content">
+            No Flash Plug-in installed.<br/>
+            This content requires the Adobe Flash Player. <br/>
+            <a href=http://www.adobe.com/go/getflash/>Get Flash</a><br/>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

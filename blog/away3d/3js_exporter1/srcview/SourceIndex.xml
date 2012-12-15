@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index>
+	<title>Source of Away3DThreeJSExporter</title>
+	<nodes>
+		<node label="libs">
+			<node label="Away3D.swc" url="source/libs/Away3D.swc"/>
+		</node>
+		<node label="src">
+			<node icon="packageIcon" label="components" expanded="true">
+				<node icon="actionScriptIcon" label="ExportButton.as" url="source/components/ExportButton.as.html"/>
+			</node>
+			<node icon="packageIcon" label="exporters" expanded="true">
+				<node icon="actionScriptIcon" label="ThreeJSExporter.as" url="source/exporters/ThreeJSExporter.as.html"/>
+			</node>
+			<node icon="mxmlAppIcon" selected="true" label="PrimitivesTestScene.as" url="source/PrimitivesTestScene.as.html"/>
+		</node>
+	</nodes>
+	<zipfile label="Download source (ZIP, 766K)" url="Away3DThreeJSExporter.zip">
+	</zipfile>
+	<sdklink label="Download Flex SDK" url="http://www.adobe.com/go/flex451_sdk_download">
+	</sdklink>
+</index>

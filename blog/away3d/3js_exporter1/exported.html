@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+  <html lang="en">
+  <head>
+    <title>three.js canvas - Away3D export</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+    <style type="text/css">
+      body {
+        color: #000;
+        font-family:Monospace;
+        font-size:13px;
+        text-align:center;
+        font-weight: bold;
+
+        background-color: #ffffff;
+        margin: 0px;
+        overflow: hidden;
+      }
+
+      #info {
+        color:#000000;
+        position: absolute;
+        top: 0px; width: 100%;
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="info">
+      MOVE mouse & press LEFT/A: rotate, MIDDLE/S: zoom, RIGHT/D: pan
+    </div>
+    <script type="text/javascript" src="https://raw.github.com/mrdoob/three.js/r44/build/Three.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/mrdoob/three.js/r44/examples/js/RequestAnimationFrame.js"></script>
+    <script type="text/javascript">
+
+      var container;
+
+      var camera, scene, renderer;
+
+      var windowHalfX = window.innerWidth / 2;
+      var windowHalfY = window.innerHeight / 2;
+
+      init();
+      animate();
+
+      function init()
+      {
+        container = document.createElement( 'div' );
+        document.body.appendChild( container );
+
+        camera = new THREE.TrackballCamera({
+
+          fov: 60,
+          aspect: window.innerWidth / window.innerHeight,
+          near: 1,
+          far: 1e3,
+
+          rotateSpeed: 1.0,
+          zoomSpeed: 1.2,
+          panSpeed: 0.8,
+
+          noZoom: false,
+          noPan: false,
+
+          staticMoving: true,
+          dynamicDampingFactor: 0.3,
+
+          keys: [ 65, 83, 68 ]
+
+        });
+
+        camera.position.y = 120;
+        camera.position.z = 240;
+
+        scene = new THREE.Scene();
+
+        renderer = new THREE.CanvasRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+
+        container.appendChild( renderer.domElement );
+
+				var plane0 = new THREE.Mesh(new THREE.PlaneGeometry( 200, 50, 1, 1 ), new THREE.MeshBasicMaterial( { color: 0xb5d0e9 } ) );
+				plane0.position.x = 0;
+				plane0.position.y = 0;
+				plane0.position.z = -80;
+				scene.addObject(plane0);
+
+				var sphere1 = new THREE.Mesh( new THREE.SphereGeometry( 10, 12, 9 ), new THREE.MeshBasicMaterial( { color: 0x95010b } ) );
+				sphere1.position.x = -73;
+				sphere1.position.y = 10;
+				sphere1.position.z = -80;
+				scene.addObject(sphere1);
+
+				var wiresphere2 = new THREE.Mesh( new THREE.SphereGeometry( 10, 12, 9 ), new THREE.MeshBasicMaterial( { color: 0x0, wireframe:true } ) );
+				wiresphere2.position.x = -43;
+				wiresphere2.position.y = 10;
+				wiresphere2.position.z = -80;
+				scene.addObject(wiresphere2);
+
+				var cube3 = new THREE.Mesh( new THREE.CubeGeometry( 20, 20, 20, 1, 1, 1, new THREE.MeshBasicMaterial( { color: 0x21ae25 } ) ), new THREE.MeshFaceMaterial() );
+				cube3.position.x = -13;
+				cube3.position.y = 10;
+				cube3.position.z = -80;
+				cube3.rotation.x = 0.5234242426730994;
+				scene.addObject(cube3);
+
+				var wirecube4 = new THREE.Mesh( new THREE.CubeGeometry( 20, 20, 20, 2, 2, 2, new THREE.MeshBasicMaterial( { color: 0x0, wireframe:true } ) ), new THREE.MeshFaceMaterial() );
+				wirecube4.position.x = 17;
+				wirecube4.position.y = 10;
+				wirecube4.position.z = -80;
+				wirecube4.rotation.y = 0.5234242426730994;
+				scene.addObject(wirecube4);
+
+				var cone5 = new THREE.Mesh( new THREE.CylinderGeometry( 6, 1, 10, 20 ), new THREE.MeshBasicMaterial( { color: 0xf84aac } ) );
+				cone5.position.x = 47;
+				cone5.position.y = 10;
+				cone5.position.z = -80;
+				cone5.rotation.x = 0.7853981633974483;
+				cone5.rotation.y = 0.7853981633974483;
+				cone5.rotation.z = 0.7853981633974483;
+				scene.addObject(cone5);
+
+				var wirecone6 = new THREE.Mesh( new THREE.CylinderGeometry( 6, 1, 10, 20 ), new THREE.MeshBasicMaterial( { color: 0x0, wireframe:true } ) );
+				wirecone6.position.x = 77;
+				wirecone6.position.y = 10;
+				wirecone6.position.z = -80;
+				wirecone6.rotation.z = 0.5234242426730994;
+				scene.addObject(wirecone6);
+
+				var cylinder7 = new THREE.Mesh( new THREE.CylinderGeometry( 6, 10, 10, 20 ), new THREE.MeshBasicMaterial( { color: 0x8dd3be } ) );
+				cylinder7.position.x = -73;
+				cylinder7.position.y = 10;
+				cylinder7.position.z = -20;
+				scene.addObject(cylinder7);
+
+				var wirecylinder8 = new THREE.Mesh( new THREE.CylinderGeometry( 6, 10, 10, 20 ), new THREE.MeshBasicMaterial( { color: 0x0, wireframe:true } ) );
+				wirecylinder8.position.x = -43;
+				wirecylinder8.position.y = 10;
+				wirecylinder8.position.z = -20;
+				scene.addObject(wirecylinder8);
+
+				var geo = new THREE.Geometry();
+				geo.vertices.push(  new THREE.Vertex( new THREE.Vector3(-23,10,-20)));
+				geo.vertices.push(  new THREE.Vertex( new THREE.Vector3(-3,10,-20)));
+				var linesegment9 = new THREE.Line( geo, new THREE.LineBasicMaterial( { color: 0x000000 } ) );
+				scene.addObject(linesegment9);
+
+				var geodesicsphere10 = new THREE.Mesh( new THREE.SphereGeometry( 10, 12, 12 ), new THREE.MeshBasicMaterial( { color: 0xa64323 } ) );
+				geodesicsphere10.position.x = 17;
+				geodesicsphere10.position.y = 10;
+				geodesicsphere10.position.z = -20;
+				scene.addObject(geodesicsphere10);
+
+				var gridplane11 = new THREE.Mesh(new THREE.PlaneGeometry( 200, 50, 4, 4 ), new THREE.MeshBasicMaterial( { color: 0x0, wireframe:true } ) );
+				gridplane11.position.x = 0;
+				gridplane11.position.y = 0;
+				gridplane11.position.z = -20;
+				scene.addObject(gridplane11);
+
+				var wireplane12 = new THREE.Mesh(new THREE.PlaneGeometry( 200, 50, 4, 4 ), new THREE.MeshBasicMaterial( { color: 0x0, wireframe:true } ) );
+				wireplane12.position.x = 0;
+				wireplane12.position.y = 0;
+				wireplane12.position.z = 40;
+				scene.addObject(wireplane12);
+
+				// RegularPolygon currently not supported
+
+				// WireRegularPolygon currently not supported
+
+				var torus15 = new THREE.Mesh(new THREE.TorusGeometry( 10, 3, 6, 8 ), new THREE.MeshBasicMaterial( { color: 0x757f8d } ) );
+				torus15.position.x = -73;
+				torus15.position.y = 10;
+				torus15.position.z = 40;
+				scene.addObject(torus15);
+
+				var wiretorus16 = new THREE.Mesh(new THREE.TorusGeometry( 10, 3, 6, 8 ), new THREE.MeshBasicMaterial( { color: 0x0, wireframe:true } ) );
+				wiretorus16.position.x = -43;
+				wiretorus16.position.y = 10;
+				wiretorus16.position.z = 40;
+				scene.addObject(wiretorus16);
+
+				var trident17 = new THREE.Trident({ xAxisColor: 0xFF0000, yAxisColor: 0x00FF00, zAxisColor: 0x0000FF, showArrows:true, length: 200 });
+				scene.addObject(trident17);
+      }
+
+      function animate() {
+        requestAnimationFrame( animate );
+        render();
+      }
+
+      function render() {
+        renderer.render( scene, camera );
+      }
+
+    </script>
+  </body>
+</html>
