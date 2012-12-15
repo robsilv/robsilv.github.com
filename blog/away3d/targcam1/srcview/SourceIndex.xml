@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index>
+	<title>Source of Away3DBeginnerLessons</title>
+	<nodes>
+		<node label="src">
+			<node icon="packageIcon" label="cameras" expanded="true">
+				<node icon="actionScriptIcon" label="TargetCamera3D2.as" url="source/cameras/TargetCamera3D2.as.html"/>
+			</node>
+			<node icon="mxmlAppIcon" selected="true" label="ExTargetCamera3D2.as" url="source/ExTargetCamera3D2.as.html"/>
+		</node>
+	</nodes>
+	<zipfile label="Download source (ZIP, 4K)" url="Away3DBeginnerLessons.zip">
+	</zipfile>
+	<sdklink label="Download Flex SDK" url="http://www.adobe.com/go/flex451_sdk_download">
+	</sdklink>
+</index>

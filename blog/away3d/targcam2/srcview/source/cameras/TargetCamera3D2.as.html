@@ -1,0 +1,123 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>TargetCamera3D2.as</title>
+<link rel="stylesheet" type="text/css" href="../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptpackage">package</span> <span class="ActionScriptDefault_Text">cameras</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">away3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">cameras</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Camera3D</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">away3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">containers</span><span class="ActionScriptOperator">.</span><span class="ActionScriptOperator">*</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">away3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">base</span><span class="ActionScriptOperator">.</span><span class="ActionScriptOperator">*</span>;
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">away3d</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">core</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">utils</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Debug</span>;
+    
+    <span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">geom</span><span class="ActionScriptOperator">.</span><span class="ActionScriptOperator">*</span>;
+    
+    
+    <span class="ActionScriptASDoc">/**
+     * Extended camera used to automatically look at a specified target object.
+     * 
+     * @see away3d.containers.View3D
+     */</span>
+    <span class="ActionScriptReserved">public</span> <span class="ActionScriptclass">class</span> <span class="ActionScriptDefault_Text">TargetCamera3D2</span> <span class="ActionScriptReserved">extends</span> <span class="ActionScriptDefault_Text">Camera3D</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_target</span>        :<span class="ActionScriptDefault_Text">Object3D</span>;
+    
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_pitch</span>        :<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_yaw</span>        :<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0;
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">_roll</span>        :<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptOperator">=</span> 0;
+        
+        <span class="ActionScriptASDoc">/**
+         * Creates a new &lt;code&gt;TargetCamera3D&lt;/code&gt; object.
+         * 
+         * @param    init    [optional]    An initialisation object for specifying default instance properties.
+         */</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">TargetCamera3D2</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">init</span>:<span class="ActionScriptDefault_Text">Object</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">super</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">init</span><span class="ActionScriptBracket/Brace">)</span>;
+            
+            <span class="ActionScriptDefault_Text">target</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">ini</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">getObject3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">"target"</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptOperator">||</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Object3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">get</span> <span class="ActionScriptDefault_Text">target</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Object3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">_target</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptReserved">set</span> <span class="ActionScriptDefault_Text">target</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">value</span>:<span class="ActionScriptDefault_Text">Object3D</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">_target</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptDefault_Text">value</span> <span class="ActionScriptBracket/Brace">)</span>    <span class="ActionScriptReserved">return</span>;
+            
+            <span class="ActionScriptDefault_Text">_target</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">value</span>;
+            
+            <span class="ActionScriptDefault_Text">position</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">_target</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">position</span>;
+            
+            <span class="ActionScriptDefault_Text">resetRotations</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">movePivotForward</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">distance</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">movePivot</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">pivotPoint</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">pivotPoint</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">Math</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">max</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">pivotPoint</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span> <span class="ActionScriptOperator">-</span> <span class="ActionScriptDefault_Text">distance</span><span class="ActionScriptOperator">,</span>0<span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">movePivotBackward</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">distance</span>:<span class="ActionScriptDefault_Text">Number</span> <span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">movePivot</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">pivotPoint</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">pivotPoint</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">pivotPoint</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">distance</span> <span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">pitch</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">angle</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">_pitch</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">angle</span>;
+            
+            <span class="ActionScriptDefault_Text">transform</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">buildMatrix</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">yaw</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">angle</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">_yaw</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">angle</span>;
+            
+            <span class="ActionScriptDefault_Text">transform</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">buildMatrix</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptReserved">override</span> <span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">roll</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">angle</span>:<span class="ActionScriptDefault_Text">Number</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">_roll</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">angle</span>;
+            
+            <span class="ActionScriptDefault_Text">transform</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">buildMatrix</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">buildMatrix</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptDefault_Text">Matrix3D</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">matrix</span>:<span class="ActionScriptDefault_Text">Matrix3D</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Matrix3D</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;            
+            <span class="ActionScriptDefault_Text">matrix</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">appendRotation</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">_pitch</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">Vector3D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">X_AXIS</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">matrix</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">appendRotation</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">_yaw</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">Vector3D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Y_AXIS</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">matrix</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">appendRotation</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">_roll</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">Vector3D</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">Z_AXIS</span> <span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptDefault_Text">matrix</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">appendTranslation</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">position</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">x</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">position</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">y</span><span class="ActionScriptOperator">,</span> <span class="ActionScriptDefault_Text">position</span><span class="ActionScriptOperator">.</span><span class="ActionScriptDefault_Text">z</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">matrix</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">resetRotations</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>:<span class="ActionScriptReserved">void</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptDefault_Text">_pitch</span>     <span class="ActionScriptOperator">=</span> 0;
+            <span class="ActionScriptDefault_Text">_yaw</span>     <span class="ActionScriptOperator">=</span> 0;
+            <span class="ActionScriptDefault_Text">_roll</span>     <span class="ActionScriptOperator">=</span> 0;
+            <span class="ActionScriptDefault_Text">transform</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">buildMatrix</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>
+    
+<span class="ActionScriptBracket/Brace">}</span>  
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre></body>
+</html>
