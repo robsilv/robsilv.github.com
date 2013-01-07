@@ -1,0 +1,100 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>applicationComplete.as</title>
+<link rel="stylesheet" type="text/css" href="../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptComment">// ActionScript file
+</span><span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span>.<span class="ActionScriptDefault_Text">events</span>.<span class="ActionScriptOperator">*</span>;
+<span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span>.<span class="ActionScriptDefault_Text">net</span>.<span class="ActionScriptOperator">*</span>;
+
+<span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">mx</span>.<span class="ActionScriptDefault_Text">events</span>.<span class="ActionScriptDefault_Text">FlexEvent</span>;
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">nc</span>                <span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">NetConnection</span>;
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">myResponder</span>        <span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Responder</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Responder</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">onReply</span><span class="ActionScriptBracket/Brace">)</span>;
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">so</span>                <span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">SharedObject</span>;
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">applicationComplete</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">FlexEvent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    
+    <span class="ActionScriptDefault_Text">nc</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">NetConnection</span><span class="ActionScriptBracket/Brace">()</span>;
+    <span class="ActionScriptDefault_Text">nc</span>.<span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">NetStatusEvent</span>.<span class="ActionScriptDefault_Text">NET_STATUS</span>, <span class="ActionScriptDefault_Text">netStatusHandler</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptDefault_Text">nc</span>.<span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">SecurityErrorEvent</span>.<span class="ActionScriptDefault_Text">SECURITY_ERROR</span>, <span class="ActionScriptDefault_Text">securityErrorHandler</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptDefault_Text">nc</span>.<span class="ActionScriptDefault_Text">connect</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">&quot;rtmp:/simple_chat&quot;</span><span class="ActionScriptBracket/Brace">)</span>;
+    
+    <span class="ActionScriptDefault_Text">so</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">SharedObject</span>.<span class="ActionScriptDefault_Text">getRemote</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">&quot;message&quot;</span>, <span class="ActionScriptDefault_Text">nc</span>.<span class="ActionScriptDefault_Text">uri</span>, <span class="ActionScriptReserved">false</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptDefault_Text">so</span>.<span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">SyncEvent</span>.<span class="ActionScriptDefault_Text">SYNC</span>, <span class="ActionScriptDefault_Text">soOnSync</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptDefault_Text">so</span>.<span class="ActionScriptDefault_Text">client</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span>;
+    <span class="ActionScriptDefault_Text">so</span>.<span class="ActionScriptDefault_Text">connect</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">nc</span><span class="ActionScriptBracket/Brace">)</span>;
+    
+    <span class="ActionScriptDefault_Text">sendBtn</span>.<span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span>.<span class="ActionScriptDefault_Text">CLICK</span>, <span class="ActionScriptDefault_Text">onClickSendBtn</span><span class="ActionScriptBracket/Brace">)</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">onClickSendBtn</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">nc</span>.<span class="ActionScriptDefault_Text">call</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">&quot;chat.sendMessage&quot;</span>, <span class="ActionScriptDefault_Text">myResponder</span>, <span class="ActionScriptDefault_Text">messageTf</span>.<span class="ActionScriptDefault_Text">text</span><span class="ActionScriptBracket/Brace">)</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">receiveMessage</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">mesg</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">mesg</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot;\n&quot;</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+ <span class="ActionScriptComment">// General Responder function for nc.call()
+</span> <span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">onReply</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">result</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Object</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span> 
+ <span class="ActionScriptBracket/Brace">{</span>
+     <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(!</span><span class="ActionScriptDefault_Text">result</span><span class="ActionScriptBracket/Brace">)</span>    <span class="ActionScriptReserved">return</span>;
+     
+     <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;onReply : resultObj = &quot;</span> <span class="ActionScriptOperator">+</span> <span class="ActionScriptDefault_Text">result</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot;\n&quot;</span>;
+     <span class="ActionScriptReserved">for</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">result</span><span class="ActionScriptBracket/Brace">)</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;prop : &quot;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot; = &quot;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">result</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot;\n&quot;</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;\n&quot;</span>;
+ <span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">soOnSync</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">SyncEvent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;soOnSync \n&quot;</span>;
+    
+    <span class="ActionScriptReserved">for</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">so</span>.<span class="ActionScriptDefault_Text">data</span><span class="ActionScriptBracket/Brace">)</span> 
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;prop &quot;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot; = &quot;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">so</span>.<span class="ActionScriptDefault_Text">data</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot;\n&quot;</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;\n&quot;</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">netStatusHandler</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">NetStatusEvent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span> 
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;netStatusHandler \n&quot;</span>;
+    
+    <span class="ActionScriptReserved">for</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">event</span>.<span class="ActionScriptDefault_Text">info</span><span class="ActionScriptBracket/Brace">)</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;prop : &quot;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot; = &quot;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">event</span>.<span class="ActionScriptDefault_Text">info</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot;\n&quot;</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">event</span>.<span class="ActionScriptDefault_Text">info</span>.<span class="ActionScriptDefault_Text">code</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot;\n\n&quot;</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">securityErrorHandler</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">SecurityErrorEvent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span> 
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;securityErrorHandler \n&quot;</span>;
+
+    <span class="ActionScriptReserved">for</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">event</span><span class="ActionScriptBracket/Brace">)</span> 
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;prop &quot;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot; = &quot;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">event</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot;\n&quot;</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;\n&quot;</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+    
+    
+    
+    
+    
+    
+    </pre></body>
+</html>

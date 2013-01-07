@@ -1,0 +1,168 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>applicationComplete.as</title>
+<link rel="stylesheet" type="text/css" href="../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span>.<span class="ActionScriptDefault_Text">events</span>.<span class="ActionScriptOperator">*</span>;
+<span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">flash</span>.<span class="ActionScriptDefault_Text">net</span>.<span class="ActionScriptOperator">*</span>;
+<span class="ActionScriptReserved">import</span> <span class="ActionScriptDefault_Text">mx</span>.<span class="ActionScriptDefault_Text">events</span>.<span class="ActionScriptDefault_Text">FlexEvent</span>;
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">nc</span>                    <span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">NetConnection</span>;
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">historyResponder</span>    <span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Responder</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Responder</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">onGetHistory</span><span class="ActionScriptBracket/Brace">)</span>;
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">messageSo</span>            <span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">SharedObject</span>;
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">userSo</span>                <span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">SharedObject</span>;
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">usersArray</span>            <span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Array</span>;
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">user</span>                <span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Object</span>;
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">applicationComplete</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">FlexEvent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">nc</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">NetConnection</span><span class="ActionScriptBracket/Brace">()</span>;
+    <span class="ActionScriptDefault_Text">nc</span>.<span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">NetStatusEvent</span>.<span class="ActionScriptDefault_Text">NET_STATUS</span>, <span class="ActionScriptDefault_Text">netStatusHandler</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptDefault_Text">nc</span>.<span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">SecurityErrorEvent</span>.<span class="ActionScriptDefault_Text">SECURITY_ERROR</span>, <span class="ActionScriptDefault_Text">securityErrorHandler</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptDefault_Text">nc</span>.<span class="ActionScriptDefault_Text">client</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span>;
+    <span class="ActionScriptDefault_Text">nc</span>.<span class="ActionScriptDefault_Text">connect</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">&quot;rtmp:/simple_chat&quot;</span><span class="ActionScriptBracket/Brace">)</span>;
+    
+    <span class="ActionScriptDefault_Text">messageSo</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">SharedObject</span>.<span class="ActionScriptDefault_Text">getRemote</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">&quot;message&quot;</span>, <span class="ActionScriptDefault_Text">nc</span>.<span class="ActionScriptDefault_Text">uri</span>, <span class="ActionScriptReserved">false</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptDefault_Text">messageSo</span>.<span class="ActionScriptDefault_Text">client</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span>;
+    <span class="ActionScriptDefault_Text">messageSo</span>.<span class="ActionScriptDefault_Text">connect</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">nc</span><span class="ActionScriptBracket/Brace">)</span>;
+    
+    <span class="ActionScriptDefault_Text">userSo</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">SharedObject</span>.<span class="ActionScriptDefault_Text">getRemote</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">&quot;users&quot;</span>, <span class="ActionScriptDefault_Text">nc</span>.<span class="ActionScriptDefault_Text">uri</span>, <span class="ActionScriptReserved">false</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptDefault_Text">userSo</span>.<span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">SyncEvent</span>.<span class="ActionScriptDefault_Text">SYNC</span>, <span class="ActionScriptDefault_Text">usersSoOnSync</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptDefault_Text">userSo</span>.<span class="ActionScriptDefault_Text">client</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span>;
+    <span class="ActionScriptDefault_Text">userSo</span>.<span class="ActionScriptDefault_Text">connect</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">nc</span><span class="ActionScriptBracket/Brace">)</span>;    
+    
+    <span class="ActionScriptDefault_Text">nc</span>.<span class="ActionScriptDefault_Text">call</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">&quot;chat.getHistory&quot;</span>, <span class="ActionScriptDefault_Text">historyResponder</span><span class="ActionScriptBracket/Brace">)</span>;
+    
+    <span class="ActionScriptDefault_Text">sendBtn</span>.<span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span>.<span class="ActionScriptDefault_Text">CLICK</span>, <span class="ActionScriptDefault_Text">clickSendBtnHandler</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptDefault_Text">clearHistoryBtn</span>.<span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span>.<span class="ActionScriptDefault_Text">CLICK</span>, <span class="ActionScriptDefault_Text">clickClearHistoryBtnHandler</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptDefault_Text">usernameBtn</span>.<span class="ActionScriptDefault_Text">addEventListener</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">MouseEvent</span>.<span class="ActionScriptDefault_Text">CLICK</span>, <span class="ActionScriptDefault_Text">clickUsernameBtnHandler</span><span class="ActionScriptBracket/Brace">)</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptComment">///////////////////////////////////////////////////////////////////////////
+</span><span class="ActionScriptComment">// Interface event handlers
+</span>
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">clickSendBtnHandler</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">nc</span>.<span class="ActionScriptDefault_Text">call</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">&quot;chat.sendMessage&quot;</span>, <span class="ActionScriptReserved">null</span>, <span class="ActionScriptDefault_Text">user</span>, <span class="ActionScriptDefault_Text">inputTf</span>.<span class="ActionScriptDefault_Text">text</span><span class="ActionScriptBracket/Brace">)</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">clickClearHistoryBtnHandler</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">nc</span>.<span class="ActionScriptDefault_Text">call</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">&quot;chat.clearHistory&quot;</span>, <span class="ActionScriptReserved">null</span><span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptDefault_Text">messagesTf</span>.<span class="ActionScriptDefault_Text">text</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">&quot;&quot;</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">clickUsernameBtnHandler</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">MouseEvent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">usernameTf</span>.<span class="ActionScriptDefault_Text">text</span>.<span class="ActionScriptDefault_Text">length</span> <span class="ActionScriptOperator">&lt;</span> 1<span class="ActionScriptBracket/Brace">)</span>    <span class="ActionScriptReserved">return</span>;
+    
+    <span class="ActionScriptDefault_Text">user</span>.<span class="ActionScriptDefault_Text">username</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">usernameTf</span>.<span class="ActionScriptDefault_Text">text</span>;
+    <span class="ActionScriptDefault_Text">nc</span>.<span class="ActionScriptDefault_Text">call</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">&quot;users.setUsername&quot;</span>, <span class="ActionScriptReserved">null</span>, <span class="ActionScriptDefault_Text">user</span>.<span class="ActionScriptDefault_Text">id</span>, <span class="ActionScriptDefault_Text">user</span>.<span class="ActionScriptDefault_Text">username</span><span class="ActionScriptBracket/Brace">)</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptComment">///////////////////////////////////////////////////////////////////////////
+</span><span class="ActionScriptComment">///////////////////////////////////////////////////////////////////////////
+</span><span class="ActionScriptComment">// Methods that the Server-Side code calls explicitly via Client.call()
+</span>
+<span class="ActionScriptComment">// automatically sets the client username onConnect()
+</span><span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">setUser</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">user</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Object</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">user</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">user</span>;
+    
+    <span class="ActionScriptDefault_Text">usernameTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">user</span>.<span class="ActionScriptDefault_Text">username</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptComment">///////////////////////////////////////////////////////////////////////////
+</span><span class="ActionScriptComment">///////////////////////////////////////////////////////////////////////////
+</span><span class="ActionScriptComment">// Methods called by Server-Side via SharedObject.send()
+</span>
+<span class="ActionScriptComment">// updates the chat text area on receiving a new message
+</span><span class="ActionScriptReserved">public</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">onSendMessage</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">user</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Object</span>, <span class="ActionScriptDefault_Text">mesg</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">messagesTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">user</span>.<span class="ActionScriptDefault_Text">username</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot; says:\n&quot;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">mesg</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot;\n\n&quot;</span>;
+    <span class="ActionScriptDefault_Text">messagesTf</span>.<span class="ActionScriptDefault_Text">validateNow</span><span class="ActionScriptBracket/Brace">()</span>;
+    <span class="ActionScriptDefault_Text">messagesTf</span>.<span class="ActionScriptDefault_Text">verticalScrollPosition</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">messagesTf</span>.<span class="ActionScriptDefault_Text">maxVerticalScrollPosition</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptComment">///////////////////////////////////////////////////////////////////////////
+</span><span class="ActionScriptComment">///////////////////////////////////////////////////////////////////////////
+</span><span class="ActionScriptComment">// Methods called when Server-Side functions return a value via a Client side Responder
+</span>
+<span class="ActionScriptComment">// updates the chat history 
+</span><span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">onGetHistory</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">result</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Array</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptReserved">for</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">result</span>.<span class="ActionScriptDefault_Text">length</span>; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">msgObj</span>    <span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Object</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">result</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+        <span class="ActionScriptDefault_Text">messagesTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptDefault_Text">msgObj</span>.<span class="ActionScriptDefault_Text">user</span>.<span class="ActionScriptDefault_Text">username</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot; says:\n&quot;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">msgObj</span>.<span class="ActionScriptDefault_Text">mesg</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot;\n\n&quot;</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    
+    <span class="ActionScriptDefault_Text">messagesTf</span>.<span class="ActionScriptDefault_Text">validateNow</span><span class="ActionScriptBracket/Brace">()</span>;
+    <span class="ActionScriptDefault_Text">messagesTf</span>.<span class="ActionScriptDefault_Text">verticalScrollPosition</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">messagesTf</span>.<span class="ActionScriptDefault_Text">maxVerticalScrollPosition</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptComment">///////////////////////////////////////////////////////////////////////////
+</span><span class="ActionScriptComment">///////////////////////////////////////////////////////////////////////////
+</span><span class="ActionScriptComment">// SharedObject onSync events
+</span>
+<span class="ActionScriptComment">// updates the users list
+</span><span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">usersSoOnSync</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">SyncEvent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">usersTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptString">&quot;&quot;</span>;
+    
+    <span class="ActionScriptDefault_Text">usersArray</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">userSo</span>.<span class="ActionScriptDefault_Text">data</span>.<span class="ActionScriptDefault_Text">users</span>;
+    <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(!</span><span class="ActionScriptDefault_Text">usersArray</span>.<span class="ActionScriptDefault_Text">length</span><span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptReserved">return</span>;
+    
+    <span class="ActionScriptReserved">for</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">int</span> <span class="ActionScriptOperator">=</span> 0; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">&lt;</span> <span class="ActionScriptDefault_Text">usersArray</span>.<span class="ActionScriptDefault_Text">length</span>; <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptOperator">++</span> <span class="ActionScriptBracket/Brace">)</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">user</span>    <span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">Object</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">usersArray</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+        <span class="ActionScriptDefault_Text">usersTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span>    <span class="ActionScriptDefault_Text">user</span>.<span class="ActionScriptDefault_Text">username</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot; \n&quot;</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    
+    <span class="ActionScriptDefault_Text">usersTf</span>.<span class="ActionScriptDefault_Text">validateNow</span><span class="ActionScriptBracket/Brace">()</span>;
+    <span class="ActionScriptDefault_Text">usersTf</span>.<span class="ActionScriptDefault_Text">verticalScrollPosition</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">usersTf</span>.<span class="ActionScriptDefault_Text">maxVerticalScrollPosition</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptComment">///////////////////////////////////////////////////////////////////////////
+</span><span class="ActionScriptComment">///////////////////////////////////////////////////////////////////////////
+</span><span class="ActionScriptComment">// NetConnection events
+</span>
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">netStatusHandler</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">NetStatusEvent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span> 
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;netStatusHandler: \n&quot;</span>;
+    
+    <span class="ActionScriptReserved">for</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">event</span>.<span class="ActionScriptDefault_Text">info</span><span class="ActionScriptBracket/Brace">)</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;  &quot;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot; = \&quot;&quot;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">event</span>.<span class="ActionScriptDefault_Text">info</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot;\&quot;\n&quot;</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;\n&quot;</span>;
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">validateNow</span><span class="ActionScriptBracket/Brace">()</span>;
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">verticalScrollPosition</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">maxVerticalScrollPosition</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptReserved">private</span> <span class="ActionScriptfunction">function</span> <span class="ActionScriptDefault_Text">securityErrorHandler</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">event</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">SecurityErrorEvent</span><span class="ActionScriptBracket/Brace">)</span><span class="ActionScriptOperator">:</span><span class="ActionScriptReserved">void</span> 
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;securityErrorHandler: \n&quot;</span>;
+
+    <span class="ActionScriptReserved">for</span> <span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptOperator">:</span><span class="ActionScriptDefault_Text">String</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptDefault_Text">event</span><span class="ActionScriptBracket/Brace">)</span> 
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;  &quot;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot; = \&quot;&quot;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">event</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">prop</span><span class="ActionScriptBracket/Brace">]</span><span class="ActionScriptOperator">+</span><span class="ActionScriptString">&quot;\&quot;\n&quot;</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">text</span> <span class="ActionScriptOperator">+=</span> <span class="ActionScriptString">&quot;\n&quot;</span>;
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">validateNow</span><span class="ActionScriptBracket/Brace">()</span>;
+    <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">verticalScrollPosition</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">outputTf</span>.<span class="ActionScriptDefault_Text">maxVerticalScrollPosition</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptComment">///////////////////////////////////////////////////////////////////////////
+</span>    
+    
+    
+    
+    
+    </pre></body>
+</html>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index>
+	<title>Source of SimpleChat1FMS</title>
+	<nodes>
+		<node icon="classpathIcon" label="src" expanded="true">
+			<node icon="actionScriptIcon" label="main.asc" url="source/main.as.html"/>
+		</node>
+	</nodes>
+</index>

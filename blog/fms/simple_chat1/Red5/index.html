@@ -1,0 +1,253 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 11">
+<meta name=Originator content="Microsoft Word 11">
+<link rel=File-List href="Red5_files/filelist.xml">
+<title>Red5 source</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Robert Silverton</o:Author>
+  <o:LastAuthor>Robert Silverton</o:LastAuthor>
+  <o:Revision>2</o:Revision>
+  <o:TotalTime>4</o:TotalTime>
+  <o:Created>2008-12-04T12:19:00Z</o:Created>
+  <o:LastSaved>2008-12-04T12:23:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>120</o:Words>
+  <o:Characters>688</o:Characters>
+  <o:Company>Unwrong Ltd</o:Company>
+  <o:Lines>5</o:Lines>
+  <o:Paragraphs>1</o:Paragraphs>
+  <o:CharactersWithSpaces>807</o:CharactersWithSpaces>
+  <o:Version>11.5207</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:DisplayBackgroundShape/>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:PunctuationKerning/>
+  <w:DrawingGridHorizontalSpacing>2.85 pt</w:DrawingGridHorizontalSpacing>
+  <w:DisplayVerticalDrawingGridEvery>2</w:DisplayVerticalDrawingGridEvery>
+  <w:ValidateAgainstSchemas/>
+  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+   <w:DontGrowAutofit/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:LatentStyles DefLockedState="false" LatentStyleCount="156">
+ </w:LatentStyles>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+span.GramE
+	{mso-style-name:"";
+	mso-gram-e:yes;}
+@page Section1
+	{size:595.3pt 841.9pt;
+	margin:72.0pt 89.85pt 72.0pt 89.85pt;
+	mso-header-margin:35.45pt;
+	mso-footer-margin:35.45pt;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0cm 5.4pt 0cm 5.4pt;
+	mso-para-margin:0cm;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-ansi-language:#0400;
+	mso-fareast-language:#0400;
+	mso-bidi-language:#0400;}
+</style>
+<![endif]--><!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="2050"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-GB style='tab-interval:36.0pt'>
+
+<div class=Section1>
+
+<p class=MsoNormal><span class=GramE><b style='mso-bidi-font-weight:normal'><span
+style='font-size:10.0pt;font-family:"Courier New";color:maroon'>package</span></b></span><span
+style='font-size:10.0pt;font-family:"Courier New"'> org.red5.core;<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span class=GramE><b style='mso-bidi-font-weight:normal'><span
+style='font-size:10.0pt;font-family:"Courier New";color:maroon'>import</span></b></span><span
+style='font-size:10.0pt;font-family:"Courier New"'> <span class=SpellE>java.util.List</span>;<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span class=GramE><b style='mso-bidi-font-weight:normal'><span
+style='font-size:10.0pt;font-family:"Courier New";color:maroon'>import</span></b></span><span
+style='font-size:10.0pt;font-family:"Courier New"'>
+org.red5.server.adapter.ApplicationAdapter;<o:p></o:p></span></p>
+
+<p class=MsoNormal><span class=GramE><b style='mso-bidi-font-weight:normal'><span
+style='font-size:10.0pt;font-family:"Courier New";color:maroon'>import</span></b></span><span
+style='font-size:10.0pt;font-family:"Courier New"'>
+org.red5.server.api.IConnection;<o:p></o:p></span></p>
+
+<p class=MsoNormal><span class=GramE><b style='mso-bidi-font-weight:normal'><span
+style='font-size:10.0pt;font-family:"Courier New";color:maroon'>import</span></b></span><span
+style='font-size:10.0pt;font-family:"Courier New"'> org.red5.server.api.IScope;<o:p></o:p></span></p>
+
+<p class=MsoNormal><span class=GramE><b style='mso-bidi-font-weight:normal'><span
+style='font-size:10.0pt;font-family:"Courier New";color:maroon'>import</span></b></span><span
+style='font-size:10.0pt;font-family:"Courier New"'>
+org.red5.server.api.so.ISharedObject;<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span class=GramE><b style='mso-bidi-font-weight:normal'><span
+style='font-size:10.0pt;font-family:"Courier New";color:maroon'>public</span></b></span><span
+style='font-size:10.0pt;font-family:"Courier New"'> <b style='mso-bidi-font-weight:
+normal'><span style='color:maroon'>class</span></b> Application <b
+style='mso-bidi-font-weight:normal'><span style='color:maroon'>extends</span></b>
+<span class=SpellE>ApplicationAdapter</span> {<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:1'>      </span><span class=GramE><b style='mso-bidi-font-weight:
+normal'><span style='color:maroon'>private</span></b></span> <span
+class=SpellE>IScope</span> <span class=SpellE><span style='color:blue'>appScope</span></span>;<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:1'>      </span><span style='color:blue'>/** {@<span
+class=SpellE>inheritDoc</span>} */<o:p></o:p></span></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-spacerun:yes'>    </span>@Override<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:1'>      </span><span class=GramE><b style='mso-bidi-font-weight:
+normal'><span style='color:maroon'>public</span></b></span> <span class=SpellE><b
+style='mso-bidi-font-weight:normal'><span style='color:maroon'>boolean</span></b></span>
+connect(<span class=SpellE>IConnection</span> <span class=SpellE>conn</span>, <span
+class=SpellE>IScope</span> scope, Object[] <span class=SpellE>params</span>) {<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:2'>            </span><span class=SpellE><span
+class=GramE><span style='color:blue'>appScope</span></span></span> = scope;<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:2'>            </span><span class=SpellE><span
+class=GramE>createSharedObject</span></span><span class=GramE>(</span><span
+class=SpellE><span style='color:blue'>appScope</span></span>, <span
+style='color:blue'>&quot;message&quot;</span>, <b style='mso-bidi-font-weight:
+normal'><span style='color:maroon'>false</span></b>);<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:2'>            </span><o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:2'>            </span><span class=GramE><b
+style='mso-bidi-font-weight:normal'><span style='color:maroon'>return</span></b></span>
+<b style='mso-bidi-font-weight:normal'><span style='color:maroon'>true</span></b>;<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:1'>      </span>}<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:1'>      </span><span style='color:blue'>/** {@<span
+class=SpellE>inheritDoc</span>} */<o:p></o:p></span></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-spacerun:yes'>    </span>@Override<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:1'>      </span><span class=GramE><b style='mso-bidi-font-weight:
+normal'><span style='color:maroon'>public</span></b></span> <b
+style='mso-bidi-font-weight:normal'><span style='color:maroon'>void</span></b>
+disconnect(<span class=SpellE>IConnection</span> <span class=SpellE>conn</span>,
+<span class=SpellE>IScope</span> scope) {<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:2'>            </span><span class=SpellE><span
+class=GramE><b style='mso-bidi-font-weight:normal'><span style='color:maroon'>super</span></b>.disconnect</span></span><span
+class=GramE>(</span><span class=SpellE>conn</span>, scope);<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-tab-count:1'>      </span>}<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-spacerun:yes'>    </span><o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-spacerun:yes'>    </span><span class=GramE><b style='mso-bidi-font-weight:
+normal'><span style='color:maroon'>public</span></b></span> <b
+style='mso-bidi-font-weight:normal'><span style='color:maroon'>void</span></b> <span
+class=SpellE>sendMessage</span>(List&lt;String&gt; <span class=SpellE>params</span>)
+{<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-spacerun:yes'>    </span><span style='mso-tab-count:1'>  </span><span
+class=SpellE>ISharedObject</span> so = <span class=SpellE><span class=GramE>getSharedObject</span></span><span
+class=GramE>(</span><span class=SpellE><span style='color:blue'>appScope</span></span>,
+<span style='color:blue'>&quot;message&quot;</span>);<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-spacerun:yes'>    </span><span style='mso-tab-count:1'>  </span><span
+class=SpellE><span class=GramE>so.sendMessage</span></span><span class=GramE>(</span><span
+style='color:blue'>&quot;<span class=SpellE>receiveMessage</span>&quot;</span>,
+<span class=SpellE>params</span>);<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'><span
+style='mso-spacerun:yes'>    </span>}<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New"'>}<o:p></o:p></span></p>
+
+</div>
+
+</body>
+
+</html>

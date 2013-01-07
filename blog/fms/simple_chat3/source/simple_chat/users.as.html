@@ -1,0 +1,83 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>users.as</title>
+<link rel="stylesheet" type="text/css" href="../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptReserved">try</span> <span class="ActionScriptBracket/Brace">{</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">dummy</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Users</span>; <span class="ActionScriptBracket/Brace">}</span> <span class="ActionScriptReserved">catch</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">e</span> <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span> <span class="ActionScriptComment">// #ifndef Users
+</span>
+    <span class="ActionScriptASDoc">/**
+     * Users component class
+     */</span>
+    <span class="ActionScriptDefault_Text">Users</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptfunction">function</span><span class="ActionScriptBracket/Brace">()</span> 
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">users_so</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">SharedObject</span>.<span class="ActionScriptReserved">get</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">&quot;users&quot;</span>, <span class="ActionScriptReserved">false</span> <span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    
+    <span class="ActionScriptDefault_Text">Users</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">nextUserID</span>    <span class="ActionScriptOperator">=</span> 0;        <span class="ActionScriptComment">// id attributed to user
+</span>    <span class="ActionScriptDefault_Text">Users</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">usersTable</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptBracket/Brace">{}</span>;        <span class="ActionScriptComment">// client hash table store
+</span>    <span class="ActionScriptDefault_Text">Users</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">users_so</span>     <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;        <span class="ActionScriptComment">// for sending user based events
+</span>    
+    <span class="ActionScriptComment">// called when client first connects to the app
+</span>    <span class="ActionScriptDefault_Text">Users</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">addUser</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptfunction">function</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">client</span> <span class="ActionScriptBracket/Brace">)</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">userId</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">nextUserID</span> <span class="ActionScriptOperator">++</span>;
+        <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">user</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptBracket/Brace">{</span> <span class="ActionScriptDefault_Text">client</span><span class="ActionScriptOperator">:</span> <span class="ActionScriptDefault_Text">client</span>, <span class="ActionScriptDefault_Text">id</span><span class="ActionScriptOperator">:</span> <span class="ActionScriptDefault_Text">userId</span>, <span class="ActionScriptDefault_Text">username</span><span class="ActionScriptOperator">:</span> <span class="ActionScriptString">&quot;user&quot;</span><span class="ActionScriptOperator">+</span><span class="ActionScriptDefault_Text">userId</span> <span class="ActionScriptBracket/Brace">}</span>;
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">usersTable</span><span class="ActionScriptBracket/Brace">[</span> <span class="ActionScriptDefault_Text">userId</span> <span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">user</span>;
+            
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">updateUsersSO</span><span class="ActionScriptBracket/Brace">()</span>;
+        <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">user</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    
+    <span class="ActionScriptComment">// called just before the client disconnects from the app
+</span>    <span class="ActionScriptDefault_Text">Users</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">removeUser</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptfunction">function</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">client</span> <span class="ActionScriptBracket/Brace">)</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">for</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">usersTable</span> <span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">usersTable</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptReserved">null</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">usersTable</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>.<span class="ActionScriptDefault_Text">client</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptDefault_Text">client</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">user</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">usersTable</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+                <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">usersTable</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;
+                <span class="ActionScriptReserved">delete</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">usersTable</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">updateUsersSO</span><span class="ActionScriptBracket/Brace">()</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    
+    <span class="ActionScriptComment">// called by the client when updating their username
+</span>    <span class="ActionScriptDefault_Text">Users</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">setUsername</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptfunction">function</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">userID</span>, <span class="ActionScriptDefault_Text">username</span> <span class="ActionScriptBracket/Brace">)</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">usersTable</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">userID</span><span class="ActionScriptBracket/Brace">]</span>.<span class="ActionScriptDefault_Text">username</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">username</span>;
+        
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">updateUsersSO</span><span class="ActionScriptBracket/Brace">()</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    
+    <span class="ActionScriptComment">// puts user objects into an array
+</span>    <span class="ActionScriptDefault_Text">Users</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">getUsers</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptfunction">function</span><span class="ActionScriptBracket/Brace">()</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">usersArray</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptBracket/Brace">[]</span>;
+        <span class="ActionScriptReserved">for</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">i</span> <span class="ActionScriptReserved">in</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">usersTable</span> <span class="ActionScriptBracket/Brace">)</span>
+        <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">usersTable</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptReserved">null</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptBracket/Brace">{</span>
+                <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">user</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">usersTable</span><span class="ActionScriptBracket/Brace">[</span><span class="ActionScriptDefault_Text">i</span><span class="ActionScriptBracket/Brace">]</span>;
+                <span class="ActionScriptDefault_Text">usersArray</span>.<span class="ActionScriptDefault_Text">push</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptDefault_Text">user</span><span class="ActionScriptBracket/Brace">)</span>;
+            <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptBracket/Brace">}</span>
+        <span class="ActionScriptReserved">return</span> <span class="ActionScriptDefault_Text">usersArray</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    
+    <span class="ActionScriptComment">// pushes the updated users data to the clients
+</span>    <span class="ActionScriptDefault_Text">Users</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">updateUsersSO</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptfunction">function</span><span class="ActionScriptBracket/Brace">()</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">users_so</span>.<span class="ActionScriptDefault_Text">setProperty</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">&quot;users&quot;</span>, <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">getUsers</span><span class="ActionScriptBracket/Brace">()</span> <span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">users_so</span>.<span class="ActionScriptDefault_Text">flush</span><span class="ActionScriptBracket/Brace">()</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    
+    <span class="ActionScriptDefault_Text">users</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Users</span><span class="ActionScriptBracket/Brace">()</span>;
+<span class="ActionScriptBracket/Brace">}</span> <span class="ActionScriptComment">// #endif</span></pre></body>
+</html>

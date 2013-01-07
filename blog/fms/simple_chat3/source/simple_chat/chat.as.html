@@ -1,0 +1,75 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>chat.as</title>
+<link rel="stylesheet" type="text/css" href="../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptReserved">try</span> <span class="ActionScriptBracket/Brace">{</span> <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">dummy</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">Chat</span>; <span class="ActionScriptBracket/Brace">}</span> <span class="ActionScriptReserved">catch</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">e</span> <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span> <span class="ActionScriptComment">// #ifndef Chat
+</span>
+    <span class="ActionScriptASDoc">/**
+     * Chat component class
+     */</span>
+    <span class="ActionScriptDefault_Text">Chat</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptfunction">function</span><span class="ActionScriptBracket/Brace">()</span> 
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptComment">// Get a non persistent shared object for sending broadcasts
+</span>        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">message_so</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">SharedObject</span>.<span class="ActionScriptReserved">get</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">&quot;message&quot;</span>, <span class="ActionScriptReserved">false</span> <span class="ActionScriptBracket/Brace">)</span>;
+        
+        <span class="ActionScriptComment">// If persist is true, then get the history back
+</span>        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history_so</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">SharedObject</span>.<span class="ActionScriptReserved">get</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">&quot;history&quot;</span>, <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">persist</span> <span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history_so</span>.<span class="ActionScriptDefault_Text">getProperty</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">&quot;history&quot;</span> <span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history</span> <span class="ActionScriptOperator">==</span> <span class="ActionScriptReserved">null</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+
+    <span class="ActionScriptDefault_Text">Chat</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">histlen</span>    <span class="ActionScriptOperator">=</span> 250;            <span class="ActionScriptComment">// Maximum history length
+</span>    <span class="ActionScriptDefault_Text">Chat</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">persist</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">true</span>;            <span class="ActionScriptComment">// Whether to save history
+</span>
+    <span class="ActionScriptDefault_Text">Chat</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">history</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span>;        <span class="ActionScriptComment">// History
+</span>    <span class="ActionScriptDefault_Text">Chat</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">message_so</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;            <span class="ActionScriptComment">// Message broadcasts
+</span>    <span class="ActionScriptDefault_Text">Chat</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">history_so</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">null</span>;            <span class="ActionScriptComment">// History persistence    
+</span>    
+    <span class="ActionScriptComment">// send a message to all others participating in the chat session
+</span>    <span class="ActionScriptDefault_Text">Chat</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">sendMessage</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptfunction">function</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">user</span>, <span class="ActionScriptDefault_Text">mesg</span> <span class="ActionScriptBracket/Brace">)</span> 
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history</span>.<span class="ActionScriptDefault_Text">push</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptBracket/Brace">{</span><span class="ActionScriptDefault_Text">user</span><span class="ActionScriptOperator">:</span> <span class="ActionScriptDefault_Text">user</span>, <span class="ActionScriptDefault_Text">mesg</span><span class="ActionScriptOperator">:</span> <span class="ActionScriptDefault_Text">mesg</span> <span class="ActionScriptBracket/Brace">}</span> <span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptReserved">while</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history</span>.<span class="ActionScriptDefault_Text">length</span> <span class="ActionScriptOperator">&gt;</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">histlen</span> <span class="ActionScriptBracket/Brace">)</span>
+            <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history</span>.<span class="ActionScriptDefault_Text">shift</span><span class="ActionScriptBracket/Brace">()</span>;
+        
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">message_so</span>.<span class="ActionScriptDefault_Text">send</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">&quot;onSendMessage&quot;</span>, <span class="ActionScriptDefault_Text">user</span>, <span class="ActionScriptDefault_Text">mesg</span> <span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+
+    <span class="ActionScriptComment">// This is called when the application about to stop
+</span>    <span class="ActionScriptDefault_Text">Chat</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">onAppStop</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptfunction">function</span><span class="ActionScriptBracket/Brace">()</span> 
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">if</span> <span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">persist</span> <span class="ActionScriptOperator">&amp;&amp;</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history_so</span> <span class="ActionScriptOperator">!=</span> <span class="ActionScriptReserved">null</span> <span class="ActionScriptBracket/Brace">)</span> <span class="ActionScriptBracket/Brace">{</span>
+            <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">saveHistory</span><span class="ActionScriptBracket/Brace">()</span>;
+        <span class="ActionScriptBracket/Brace">}</span>
+    <span class="ActionScriptBracket/Brace">}</span>    
+    
+    <span class="ActionScriptDefault_Text">Chat</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">saveHistory</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptfunction">function</span><span class="ActionScriptBracket/Brace">()</span> 
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history_so</span>.<span class="ActionScriptDefault_Text">setProperty</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">&quot;history&quot;</span>, <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history</span> <span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history_so</span>.<span class="ActionScriptDefault_Text">flush</span><span class="ActionScriptBracket/Brace">()</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+
+    <span class="ActionScriptDefault_Text">Chat</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">clearHistory</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptfunction">function</span><span class="ActionScriptBracket/Brace">()</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history_so</span>.<span class="ActionScriptDefault_Text">setProperty</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">&quot;history&quot;</span>, <span class="ActionScriptReserved">null</span> <span class="ActionScriptBracket/Brace">)</span>;
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history_so</span>.<span class="ActionScriptDefault_Text">flush</span><span class="ActionScriptBracket/Brace">()</span>;
+        <span class="ActionScriptReserved">delete</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history</span>;
+        <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Array</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    
+    <span class="ActionScriptComment">// allows clients to retrieve history
+</span>    <span class="ActionScriptDefault_Text">Chat</span>.<span class="ActionScriptDefault_Text">prototype</span>.<span class="ActionScriptDefault_Text">getHistory</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptfunction">function</span><span class="ActionScriptBracket/Brace">()</span>
+    <span class="ActionScriptBracket/Brace">{</span>
+        <span class="ActionScriptReserved">return</span> <span class="ActionScriptReserved">this</span>.<span class="ActionScriptDefault_Text">history</span>;
+    <span class="ActionScriptBracket/Brace">}</span>
+    
+    <span class="ActionScriptDefault_Text">chat</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptReserved">new</span> <span class="ActionScriptDefault_Text">Chat</span><span class="ActionScriptBracket/Brace">()</span>;
+
+<span class="ActionScriptBracket/Brace">}</span> <span class="ActionScriptComment">// #endif</span></pre></body>
+</html>

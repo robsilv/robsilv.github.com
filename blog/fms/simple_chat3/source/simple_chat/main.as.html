@@ -1,0 +1,35 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>main.as</title>
+<link rel="stylesheet" type="text/css" href="../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="ActionScriptDefault_Text">load</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">&quot;chat.asc&quot;</span> <span class="ActionScriptBracket/Brace">)</span>;
+<span class="ActionScriptDefault_Text">load</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptString">&quot;users.asc&quot;</span> <span class="ActionScriptBracket/Brace">)</span>;
+
+<span class="ActionScriptComment">// called when client attempts to enter app
+</span><span class="ActionScriptDefault_Text">application</span>.<span class="ActionScriptDefault_Text">onConnect</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptfunction">function</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">client</span> <span class="ActionScriptBracket/Brace">)</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptDefault_Text">client</span>.<span class="ActionScriptDefault_Text">chat</span>        <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">chat</span>;
+    <span class="ActionScriptDefault_Text">client</span>.<span class="ActionScriptDefault_Text">users</span>    <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">users</span>;
+    
+    <span class="ActionScriptComment">// get a unique user object for this client
+</span>    <span class="ActionScriptvar">var</span> <span class="ActionScriptDefault_Text">user</span>        <span class="ActionScriptOperator">=</span> <span class="ActionScriptDefault_Text">users</span>.<span class="ActionScriptDefault_Text">addUser</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">client</span> <span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptComment">// accept client connection
+</span>    <span class="ActionScriptDefault_Text">application</span>.<span class="ActionScriptDefault_Text">acceptConnection</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">client</span> <span class="ActionScriptBracket/Brace">)</span>;
+    <span class="ActionScriptComment">// pass the user object back to the client
+</span>    <span class="ActionScriptDefault_Text">client</span>.<span class="ActionScriptDefault_Text">call</span><span class="ActionScriptBracket/Brace">(</span><span class="ActionScriptString">&quot;setUser&quot;</span>, <span class="ActionScriptReserved">null</span>, <span class="ActionScriptDefault_Text">user</span><span class="ActionScriptBracket/Brace">)</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptComment">// called when client leaves app
+</span><span class="ActionScriptDefault_Text">application</span>.<span class="ActionScriptDefault_Text">onDisconnect</span> <span class="ActionScriptOperator">=</span> <span class="ActionScriptfunction">function</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">client</span> <span class="ActionScriptBracket/Brace">)</span>
+<span class="ActionScriptBracket/Brace">{</span>
+    <span class="ActionScriptComment">// remove the reference to the user
+</span>    <span class="ActionScriptDefault_Text">users</span>.<span class="ActionScriptDefault_Text">removeUser</span><span class="ActionScriptBracket/Brace">(</span> <span class="ActionScriptDefault_Text">client</span> <span class="ActionScriptBracket/Brace">)</span>;
+<span class="ActionScriptBracket/Brace">}</span>
+
+<span class="ActionScriptComment">//application.allowDebug    = true;</span></pre></body>
+</html>

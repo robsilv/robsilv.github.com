@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index>
+	<title>Source of SimpleChat1Client</title>
+	<nodes>
+		<node icon="classpathIcon" label="src" expanded="true">
+			<node icon="actionScriptIcon" label="applicationComplete.as" url="source/applicationComplete.as.html"/>
+			<node icon="mxmlAppIcon" selected="true" label="SimpleChat1Client.mxml" url="source/SimpleChat1Client.mxml.html"/>
+		</node>
+	</nodes>
+</index>

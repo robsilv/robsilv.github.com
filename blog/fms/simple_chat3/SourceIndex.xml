@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index>
+	<title>Source of Simple Chat</title>
+	<nodes>
+		<node label="src" icon="classpathIcon" expanded="true">
+			<node label="simple_chat" icon="packageIcon" expanded="true">
+				<node label="chat.asc" icon="actionScriptIcon" url="source/simple_chat/chat.as.html"/>
+				<node label="main.asc" icon="actionScriptIcon" url="source/simple_chat/main.as.html"/>
+				<node label="users.asc" icon="actionScriptIcon" url="source/simple_chat/users.as.html"/>
+			</node>
+			<node label="applicationComplete.as" icon="actionScriptIcon" url="source/applicationComplete.as.html"/>
+			<node selected="true" label="main.mxml" icon="mxmlAppIcon" url="source/main.mxml.html"/>
+		</node>
+	</nodes>
+</index>
