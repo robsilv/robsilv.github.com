@@ -1,0 +1,68 @@
+﻿<!doctype html>
+<html lang="en">
+	<head>
+		<title>Graph3D.js: example 1</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		
+		<!-- Libs -->
+		<script type="application/javascript" src="../../lib/tween.js"></script>
+        <script type="application/javascript" src="../../lib/three.min.js"></script>
+		<script type="application/javascript" src="../../lib/CombinedCamera.js"></script>
+        <script type="application/javascript" src="../../lib/stats.min.js"></script>
+		
+		<!-- Global -->
+		<!--<script type="application/javascript" src="../../src/graph3d/Graph3D.js"></script>-->
+		
+		<!-- Utils -->
+        <script type="application/javascript" src="../../src/graph3d/utils/events/ListenerFunctions.js"></script>
+        <script type="application/javascript" src="../../src/graph3d/utils/events/EventDispatcher.js"></script>
+        <script type="application/javascript" src="../../src/graph3d/utils/loading/TextLoader.js"></script>
+		
+		<!-- Common -->
+        <script type="application/javascript" src="../../src/graph3d/common/data/DataModel.js"></script>
+        <script type="application/javascript" src="../../src/graph3d/common/util/GraphUtils.js"></script>
+        <script type="application/javascript" src="../../src/graph3d/common/ui/components/AxisComponent.js"></script>
+        <script type="application/javascript" src="../../src/graph3d/common/ui/components/XAxisComponent.js"></script>
+        <script type="application/javascript" src="../../src/graph3d/common/ui/components/YAxisComponent.js"></script>
+        <script type="application/javascript" src="../../src/graph3d/common/ui/components/ZAxisComponent.js"></script>
+        <script type="application/javascript" src="../../src/graph3d/common/ui/views/GraphView.js"></script>
+		
+		<!-- This example's JS -->
+		<script type="application/javascript" src="app.js"></script>
+		
+		
+		<!-- load the font file from canvas-text -->
+		<script type="application/javascript" src="../../files/fonts/helvetiker_regular.typeface.js"></script>
+		
+		<!-- Global CSS -->	
+		
+		<!-- This example's CSS -->
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #f0f0f0;
+				margin: 0px;
+				overflow: hidden;
+				color: #AAAAAA;
+			}
+
+			a {
+				color: red;
+			}
+		</style>		
+	</head>
+	<body>
+	
+		<div style="position: absolute; top: 10px; width: 100%; text-align: center; ">
+
+			Views:
+				<button id="frontView">Front View (X &amp; Y)</button>
+				<button id="bottomView">Bottom View (X &amp; Z)</button>
+				<button id="rightView">Right View (Y &amp; Z)</button>
+				<button id="overView">3D View</button>
+				<button id="startBtn">Start</button>
+		</div>
+
+	</body>
+</html>
