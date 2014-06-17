@@ -12,16 +12,6 @@ var ZAxisComponent = (function (_super) {
         _super.call(this, axisLength, defaultTextSize);
         //this._init(axisLength, defaultTextSize);
     }
-    ZAxisComponent.create = function (axisLength, defaultTextSize) {
-        var newInstance = new ZAxisComponent(axisLength, defaultTextSize);
-        return newInstance;
-    };
-
-    //private _init(axisLength, defaultTextSize)
-    //{
-    //	this._axisLength = axisLength;
-    //	this._defaultTextSize = defaultTextSize;
-    //}
     ZAxisComponent.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
     };
@@ -37,21 +27,14 @@ var ZAxisComponent = (function (_super) {
         var mesh = text.children[0];
         var rightOffset = -1 * (mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x);
 
-        var state = {
-            position: new THREE.Vector3(rightOffset - 40, 0, -this._defaultTextSize / 2),
-            rotation: new THREE.Vector3(Math.PI / 2, 0, 0)
-        };
-
+        var state = new AxisState(new THREE.Vector3(rightOffset - 40, 0, -this._defaultTextSize / 2), new THREE.Euler(Math.PI / 2, 0, 0));
         return state;
     };
     ZAxisComponent.prototype._getMarkerRightState = function (text) {
         var mesh = text.children[0];
         var rightOffset = -1 * (mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x);
 
-        var state = {
-            position: new THREE.Vector3(rightOffset - 40, 0, -this._defaultTextSize / 2),
-            rotation: new THREE.Vector3(Math.PI / 2, 0, 0)
-        };
+        var state = new AxisState(new THREE.Vector3(rightOffset - 40, 0, -this._defaultTextSize / 2), new THREE.Euler(Math.PI / 2, 0, 0));
 
         return state;
     };
@@ -59,10 +42,7 @@ var ZAxisComponent = (function (_super) {
         var mesh = text.children[0];
         var rightOffset = -1 * (mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x);
 
-        var state = {
-            position: new THREE.Vector3(rightOffset - 40, 0, -this._defaultTextSize / 2),
-            rotation: new THREE.Vector3(Math.PI / 2, 0, 0)
-        };
+        var state = new AxisState(new THREE.Vector3(rightOffset - 40, 0, -this._defaultTextSize / 2), new THREE.Euler(Math.PI / 2, 0, 0));
 
         return state;
     };
@@ -82,15 +62,10 @@ var ZAxisComponent = (function (_super) {
         var mesh = text.children[0];
         var centreOffset = -0.5 * (mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x);
 
-        var state = {
-            //position: new THREE.Vector3(-120, 0, -this._axisLength / 2 - centreOffset - 150),
-            position: new THREE.Vector3(-120, 0, -this._axisLength / 2 - centreOffset),
-            rotation: new THREE.Euler(Math.PI / 2, 0, Math.PI + Math.PI / 2)
-        };
+        var state = new AxisState(new THREE.Vector3(-120, 0, -this._axisLength / 2 - centreOffset), new THREE.Euler(Math.PI / 2, 0, Math.PI + Math.PI / 2));
 
-        console.log("getZTitleInitState p: x " + state.position.x + " y " + state.position.y + " z " + state.position.z);
-        console.log("getZTitleInitState r: x " + state.rotation.x + " y " + state.rotation.y + " z " + state.rotation.z);
-
+        //console.log("getZTitleInitState p: x " + state.position.x + " y " + state.position.y + " z " + state.position.z);
+        //console.log("getZTitleInitState r: x " + state.rotation.x + " y " + state.rotation.y + " z " + state.rotation.z);
         return state;
     };
 
@@ -112,10 +87,7 @@ var ZAxisComponent = (function (_super) {
         var mesh = text.children[0];
         var centreOffset = -0.5 * (mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x);
 
-        var state = {
-            position: new THREE.Vector3(-120, 0, -this._axisLength / 2 - centreOffset),
-            rotation: new THREE.Vector3(Math.PI / 2, 0, Math.PI + Math.PI / 2)
-        };
+        var state = new AxisState(new THREE.Vector3(-120, 0, -this._axisLength / 2 - centreOffset), new THREE.Euler(Math.PI / 2, 0, Math.PI + Math.PI / 2));
 
         return state;
     };
@@ -123,10 +95,7 @@ var ZAxisComponent = (function (_super) {
         var mesh = text.children[0];
         var centreOffset = -0.5 * (mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x);
 
-        var state = {
-            position: new THREE.Vector3(-120, 0, -this._axisLength / 2 - centreOffset),
-            rotation: new THREE.Vector3(Math.PI / 2, 0, Math.PI + Math.PI / 2)
-        };
+        var state = new AxisState(new THREE.Vector3(-120, 0, -this._axisLength / 2 - centreOffset), new THREE.Euler(Math.PI / 2, 0, Math.PI + Math.PI / 2));
 
         return state;
     };
@@ -161,11 +130,7 @@ var ZAxisComponent = (function (_super) {
 
     // protected
     ZAxisComponent.prototype._getAxisInitState = function () {
-        var state = {
-            position: new THREE.Vector3(0, 0, 0),
-            rotation: new THREE.Vector3(0, 0, Math.PI / 2) };
-
-        return state;
+        return new AxisState(new THREE.Vector3(0, 0, 0), new THREE.Euler(0, 0, Math.PI / 2));
     };
 
     //ANIMATIONS =====================================

@@ -61,14 +61,20 @@ var GraphUtils = (function () {
             if (stepVal >= maxVal) {
                 maxNumSteps = i;
                 finalMaxVal = stepVal;
-                console.log("maxStep " + stepVal + " finalMaxVal " + finalMaxVal + " i " + i);
+
                 break;
             }
         }
 
-        console.log("minVal " + minVal + " maxVal " + maxVal + " numSteps " + maxNumSteps + " stepSize " + stepSize);
+        //console.log("minVal " + minVal + " maxVal " + maxVal + " numSteps " + maxNumSteps + " stepSize " + stepSize);
+        var axisData = new AxisData();
+        axisData.minVal = graphMinVal;
+        axisData.maxVal = finalMaxVal;
+        axisData.stepSize = stepSize;
+        axisData.numSteps = maxNumSteps;
 
-        return { minVal: graphMinVal, maxVal: finalMaxVal, stepSize: stepSize, numSteps: maxNumSteps };
+        return axisData;
+        //return { minVal: graphMinVal, maxVal: finalMaxVal, stepSize: stepSize, numSteps: maxNumSteps };
     };
 
     // TODO: numFractionalSteps can be determined by comparing the minVal to Math.pow(1/base, n)
@@ -104,7 +110,18 @@ var GraphUtils = (function () {
 
         var numSteps = numLogSteps + numFractionalSteps;
 
-        return { minVal: graphMinVal, maxVal: finalMaxVal, numSteps: numSteps, logarithmic: true, numLogSteps: numLogSteps, numFractionalSteps: numFractionalSteps, base: base, baseLog: baseLog };
+        var axisData = new AxisData();
+        axisData.minVal = graphMinVal;
+        axisData.maxVal = finalMaxVal;
+        axisData.numSteps = numSteps;
+        axisData.logarithmic = true;
+        axisData.numLogSteps = numLogSteps;
+        axisData.numFractionalSteps = numFractionalSteps;
+        axisData.base = base;
+        axisData.baseLog = baseLog;
+
+        return axisData;
+        //return { minVal: graphMinVal, maxVal: finalMaxVal, numSteps: numSteps, logarithmic: true, numLogSteps: numLogSteps, numFractionalSteps: numFractionalSteps, base: base, baseLog: baseLog };
     };
 
     GraphUtils.prototype.getLogOfBase = function (val, base, debug) {

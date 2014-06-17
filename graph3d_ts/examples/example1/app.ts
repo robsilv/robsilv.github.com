@@ -6,8 +6,8 @@ class Example1 {
 
     constructor() {
 
-        var graphView = GraphView.create();
-        var dataModel = DataModel.create();
+        var graphView = new GraphView();//GraphView.create();
+        var dataModel = new DataModel();//DataModel.create();
         dataModel.addEventListener("loadComplete", function () { graphView.setDataProvider(dataModel.getData()); });
         dataModel.load();
     }

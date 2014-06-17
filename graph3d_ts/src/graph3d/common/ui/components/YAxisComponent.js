@@ -12,16 +12,6 @@ var YAxisComponent = (function (_super) {
         _super.call(this, axisLength, defaultTextSize);
         //this._init(axisLength, defaultTextSize);
     }
-    YAxisComponent.create = function (axisLength, defaultTextSize) {
-        var newInstance = new YAxisComponent(axisLength, defaultTextSize);
-        return newInstance;
-    };
-
-    //private _init(axisLength, defaultTextSize)
-    //{
-    //	this._axisLength = axisLength;
-    //	this._defaultTextSize = defaultTextSize;
-    //}
     YAxisComponent.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
     };
@@ -37,21 +27,13 @@ var YAxisComponent = (function (_super) {
         var mesh = text.children[0];
         var rightOffset = -1 * (mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x);
 
-        var state = {
-            position: new THREE.Vector3(rightOffset - 40, -this._defaultTextSize / 2, 0),
-            rotation: new THREE.Vector3(0, 0, 0)
-        };
-
-        return state;
+        return new AxisState(new THREE.Vector3(rightOffset - 40, -this._defaultTextSize / 2, 0), new THREE.Euler(0, 0, 0));
     };
     YAxisComponent.prototype._getMarkerBottomState = function (text) {
         var mesh = text.children[0];
         var rightOffset = -1 * (mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x);
 
-        var state = {
-            position: new THREE.Vector3(rightOffset - 40, this._defaultTextSize / 2, 0),
-            rotation: new THREE.Vector3(Math.PI, 0, 0)
-        };
+        var state = new AxisState(new THREE.Vector3(rightOffset - 40, this._defaultTextSize / 2, 0), new THREE.Euler(Math.PI, 0, 0));
 
         return state;
     };
@@ -71,15 +53,10 @@ var YAxisComponent = (function (_super) {
         var mesh = text.children[0];
         var centreOffset = -0.5 * (mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x);
 
-        var state = {
-            //position: new THREE.Vector3(-120, centreOffset + this._axisLength / 2 - 150, 0),
-            position: new THREE.Vector3(-120, centreOffset + this._axisLength / 2, 0),
-            rotation: new THREE.Euler(0, 0, Math.PI / 2)
-        };
+        var state = new AxisState(new THREE.Vector3(-120, centreOffset + this._axisLength / 2, 0), new THREE.Euler(0, 0, Math.PI / 2));
 
-        console.log("getYTitleInitState p: x " + state.position.x + " y " + state.position.y + " z " + state.position.z);
-        console.log("getYTitleInitState r: x " + state.rotation.x + " y " + state.rotation.y + " z " + state.rotation.z);
-
+        //console.log("getYTitleInitState p: x " + state.position.x + " y " + state.position.y + " z " + state.position.z);
+        //console.log("getYTitleInitState r: x " + state.rotation.x + " y " + state.rotation.y + " z " + state.rotation.z);
         return state;
     };
 
@@ -101,10 +78,7 @@ var YAxisComponent = (function (_super) {
         var mesh = text.children[0];
         var centreOffset = -0.5 * (mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x);
 
-        var state = {
-            position: new THREE.Vector3(-120, centreOffset + this._axisLength / 2, 0),
-            rotation: new THREE.Vector3(0, Math.PI, Math.PI / 2)
-        };
+        var state = new AxisState(new THREE.Vector3(-120, centreOffset + this._axisLength / 2, 0), new THREE.Euler(0, Math.PI, Math.PI / 2));
 
         return state;
     };

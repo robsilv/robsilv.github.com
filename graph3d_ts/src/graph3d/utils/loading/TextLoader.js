@@ -7,9 +7,12 @@ var __extends = this.__extends || function (d, b) {
 };
 var TextLoader = (function (_super) {
     __extends(TextLoader, _super);
-    function TextLoader() {
+    function TextLoader(url) {
         _super.call(this);
         this._init();
+        if (url != null) {
+            this.setUrl(url);
+        }
     }
     TextLoader.prototype._init = function () {
         this._url = null;
@@ -19,12 +22,11 @@ var TextLoader = (function (_super) {
         return this;
     };
 
-    TextLoader.create = function (aUrl) {
-        var newTextLoader = new TextLoader();
-        newTextLoader.setUrl(aUrl);
-        return newTextLoader;
-    };
-
+    //public static create(aUrl:string):TextLoader {
+    //	var newTextLoader = new TextLoader();
+    //	newTextLoader.setUrl(aUrl);
+    //	return newTextLoader;
+    //}
     TextLoader.prototype.getData = function () {
         return this._data;
     };
@@ -46,8 +48,6 @@ var TextLoader = (function (_super) {
     };
 
     TextLoader.prototype._onReadyStateChange = function () {
-        console.log("GRAPH3D.utils.loading.TextLoader::_onReadyStateChange");
-        console.log(this._url, this._loader.readyState, this._loader.status);
         switch (this._loader.readyState) {
             case 0:
             case 1:

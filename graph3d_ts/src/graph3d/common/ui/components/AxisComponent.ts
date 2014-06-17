@@ -1,12 +1,29 @@
 //var namespace = GRAPH3D.namespace("GRAPH3D.common.ui.components");
-	
+class AxisData {
+    public base: number;
+    public baseLog: number;
+    public minVal: number;
+    public maxVal: number;
+    public numLogSteps: number;
+    public numSteps: number;
+    public numFractionalSteps: number;
+    public stepSize: number;
+    public logarithmic: boolean;
+}
+
+class AxisState {
+    constructor(public position: THREE.Vector3, public rotation: THREE.Euler) {
+
+    }
+}
+
 class AxisComponent {
 
     private _textColor: number;
     private _markerLineColor: number;
     private _markerLineOpacity: number;
 
-    public data:any;
+    public data: AxisData; // set in GraphView.setDataProvider
 
     public _axisLength: number; //protected
     public _defaultTextSize: number; //protected
@@ -40,11 +57,7 @@ class AxisComponent {
 		this._textColor = 0xAAAAAA;
 		this._markerLineColor = 0xCCCCCC;
 		this._markerLineOpacity = 1;
-			
-		//
-			
-		this.data = {};
-			
+
 		this._axisLength = axisLength;
 		this._defaultTextSize = defaultTextSize;
 			
@@ -54,8 +67,6 @@ class AxisComponent {
 		this.titleText = null;
 		this.animationValues = { lines: [], text: [], markers: [], titleText: {}, container: {} };
 		this.container = new THREE.Object3D();
-			
-		this.data = null; // graph data
 	}
 		
 	public destroy():void 
@@ -364,40 +375,37 @@ class AxisComponent {
 		
 	// data ===========================================
     // protected - for override
-    public _getAxisInitState(): any
+    public _getAxisInitState(): AxisState
 	{
-		var state:Object = { position: new THREE.Vector3(0, 0, 0),
-						rotation: new THREE.Vector3(0, 0, 0) };
-
-		return state;	
-	}
+        return new AxisState(new THREE.Vector3(0, 0, 0), new THREE.Euler(0, 0, 0));
+    }
+    // protected - for override 
+    public _getMarkerInitState(text): AxisState {
+        return null;
+    }
+    // protected - for override 
+    public _getTitleInitState(text): AxisState {
+        return null;
+    }
 	// protected - for override 
 	public _getAxisMarkerPos(step) {
 		return null;
     }
     // protected - for override 
-    public _getMarkerInitState(text) {
+    public _getMarkerInitAnimValues(): any {	
 		return null;
     }
     // protected - for override 
-    public _getMarkerInitAnimValues() {	
+    public _getTitleInitAnimValues(state:AxisState):any {
 		return null;
     }
     // protected - for override 
-    public _getTitleInitState(text) {
-		return null;
-    }
-    // protected - for override 
-    public _getTitleInitAnimValues(state) {
-		return null;
-    }
-    // protected - for override 
-    public _getInitAxisAnimValues() {
+    public _getInitAxisAnimValues(): any {
         return null;
     }
 		
     // protected
-	public _getTextAnimValues(text:THREE.Object3D, state:any):Object
+	public _getTextAnimValues(text:THREE.Object3D, state:AxisState):Object
 	{
 		//var state = this._getMarkerInitState(text);
 			
@@ -413,7 +421,7 @@ class AxisComponent {
 		return obj;
 	}
 	// protected
-	public _getTitleAnimValues(text:THREE.Object3D, state:any)
+	public _getTitleAnimValues(text:THREE.Object3D, state:AxisState):any
 	{
 		//var state = this._getMarkerInitState(text);
 			

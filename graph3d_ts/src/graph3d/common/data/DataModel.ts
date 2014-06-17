@@ -3,7 +3,7 @@ class GlobalData {
 
     public regions: Array<RegionData>;
     public countries: any;//Map<string, CountryData>;
-    public time: TimeData;
+    public overview: OverviewData;
 
     constructor() {
         this.regions = [];
@@ -11,9 +11,12 @@ class GlobalData {
     }
 }
 
+// Data dynamically added to CountryData in a lookup table as follows:
+// country[propertyName][year] = value;
+// ..where propertyName == gdpPerCapita, hivPrevelance, etc.
 class CountryData {
 
-    public time: TimeData;
+    public overview: OverviewData;
 
     constructor(public name: string, public region: RegionData) {
 
@@ -23,14 +26,24 @@ class CountryData {
 class RegionData {
 
     public countries: Array<CountryData>;
-    public time: TimeData;
+    public overview: OverviewData;
 
     constructor(public name: string) {
         this.countries = [];
     }
 }
 
-class TimeData {
+// USED FOR CLIPPING AXES (min & max values)
+// Stores:
+// - The time range for a given property
+// - The max & min values for the property
+// - The countries which hold the max & min values
+class OverviewData {
+    // Convenience properties for quick reference to statistically important min/max values
+    public maxValueCountry: CountryData;
+    public minValueCountry: CountryData;
+    public maxValueYear: number;
+    public minValueYear: number;
 
     constructor(public minYear = 10000, public maxYear = 0, public minValue = 10000000000, public maxValue = 0) {
 
@@ -46,8 +59,8 @@ class DataModel extends EventDispatcher {
     private _loadQueue: Array<Object>;
     private _currLoadObj: any; // from loadQueue
 
-    private _regionsLoadedCallback: Function;
-    private _tableLoadedCallback: Function;
+    //private _regionsLoadedCallback: Function;
+    //private _tableLoadedCallback: Function;
 
     private _regionsUrl: string;
 
@@ -57,19 +70,13 @@ class DataModel extends EventDispatcher {
 		this._init();
 	}
 	
-	public static create():DataModel 
-	{
-		var newInstance = new DataModel();
-		return newInstance;
-	}
-	
 	private _init():void
 	{
 		//this._global = { regions:[], countries:{} };
         this._global = new GlobalData();
 
-		this._regionsLoadedCallback = ListenerFunctions.createListenerFunction(this, this._regionsLoaded);
-		this._tableLoadedCallback = ListenerFunctions.createListenerFunction(this, this._tableLoaded);
+		//this._regionsLoadedCallback = ListenerFunctions.createListenerFunction(this, this._regionsLoaded);
+		//this._tableLoadedCallback = ListenerFunctions.createListenerFunction(this, this._tableLoaded);
 		
         this._regionsUrl = "../../files/data/Geographic_Regions.csv";
 
@@ -99,49 +106,53 @@ class DataModel extends EventDispatcher {
 	
 	private _createLoader(url:string, callBack:Function):TextLoader
 	{
-		var newLoader:TextLoader = TextLoader.create(url);
+        var newLoader: TextLoader = new TextLoader(url);//TextLoader.create(url);
         newLoader.addEventListener(TextLoader.LOADED, callBack);//, false);
 
 		return newLoader;
 	}
 	
+    // Called on init - Loads regions first
 	public load():void
 	{
-		this._csvLoader = this._createLoader(this._regionsUrl, this._regionsLoadedCallback);
+		this._csvLoader = this._createLoader(this._regionsUrl, this._regionsLoaded);
 		this._csvLoader.load();	
 	}
 	
-	private _regionsLoaded(aEvent):void 
-	{	
-		var data:string = this._csvLoader.getData();
-		//console.log("REGIONS LOADER DATA "+data);
-		
-		this._parseRegions(data);
-
-		this._loadNext();	
-	}
-
+    // Called for subsequent loads - all loads are tables
     private _loadNext(): void {
         this._currLoadObj = this._loadQueue[this._loadNum];
 
         if (this._loadNum < this._loadQueue.length) {
             this._loadNum++;
 
-            this._csvLoader = this._createLoader(this._currLoadObj.url, this._tableLoadedCallback);
+            this._csvLoader = this._createLoader(this._currLoadObj.url, this._tableLoaded);
             this._csvLoader.load();
         } else {
             this.dispatchEvent({ type: "loadComplete" });
         }
     }
 
-	private _tableLoaded(aEvent) :void
+    // Callback
+    private _regionsLoaded = (aEvent): void => {
+        var data: string = this._csvLoader.getData();
+        //console.log("REGIONS LOADER DATA "+data);
+
+        this._parseRegions(data);
+
+        this._loadNext();
+    }
+
+    // Callback
+	private _tableLoaded = (aEvent) :void =>
 	{	
 		var data: string = this._csvLoader.getData();
-		//console.log("POPULATIONS LOADER DATA "+data);
+        //console.log("POPULATIONS LOADER DATA "+data);
 
-		var scope = this;
-		this._parseTable(data, function(column, years, i) { scope._parseColumn(scope._currLoadObj.title, column, years, i) });
-	
+        //TODO: Remove this JS style scope weirdness
+        var scope = this;
+        this._parseTable(data);//, function (column, years, i) { scope._parseColumn(scope._currLoadObj.title, column, years, i) });
+
 		this._loadNext();
 	}
 	
@@ -155,7 +166,8 @@ class DataModel extends EventDispatcher {
 		return data;
 	}
 	
-    private _parseRegions(data:string)
+    // Add countries to regions
+    private _parseRegions(data:string):void
 	{
 		data = this._cleanData(data);
 		
@@ -167,27 +179,22 @@ class DataModel extends EventDispatcher {
 		// remove chart title from array
 		//column.shift();
 		
-		// store column titles
-		for (var i = 0; i < column.length; i ++) 
-		{
+		// store column titles 
+		for (var i = 0; i < column.length; i ++) {
             //this._global.regions.push({ name: column[i], countries: [] });  
             this._global.regions.push(new RegionData(column[i]));        
 		}
 
 		// loop through all rows
-		for (var i = 0; i < rows.length; i++)
-		{
+		for (var i = 0; i < rows.length; i++) {
 			  // this line helps to skip empty rows
-			if (rows[i]) 
-			{                   
-				  // our columns are separated by comma
+			if (rows[i]) {                   
+				// columns are separated by commas
 				var column = rows[i].split(",");
 				
 				// skip col titles row
-				if (i != 0) 
-				{
-					for ( var j = 0; j < column.length; j ++ )
-					{
+				if (i != 0) {
+					for ( var j = 0; j < column.length; j ++ ) {
 						var region:RegionData = this._global.regions[j];
 						var country:string = column[j];
 						if (region) {
@@ -198,7 +205,7 @@ class DataModel extends EventDispatcher {
 								this._global.countries[country] = countryObj;
 							}
 						} else {
-							console.log("NO REGION "+j+" country "+column[j]);
+							//console.log("NO REGION "+j+" country "+column[j]);
 						}
 					}
 				}
@@ -206,7 +213,7 @@ class DataModel extends EventDispatcher {
 		}
 	}
 	
-	private _parseTable(data:string, parseFunc:Function):Array<string>
+	private _parseTable(data: string): Array<string>//, parseFunc:Function):Array<string>
 	{
 		data = this._cleanData(data);
 		
@@ -221,130 +228,128 @@ class DataModel extends EventDispatcher {
 		var titles:Array<string> = [];
 		
 		// store column titles
-		for (var i = 0; i < column.length; i ++) 
-		{
+		for (var i = 0; i < column.length; i ++)  {
 			titles.push(column[i]);        
 		}
 		
-		console.log("Column Titles "+titles);
+		//console.log("Column Titles "+titles);
 		
 		// loop through all rows
-		for (var i = 0; i < rows.length; i++)
-		{
+		for (var i = 0; i < rows.length; i++) {
 			  // this line helps to skip empty rows
-			if (rows[i]) 
-			{                   
+			if (rows[i]) {
 				  // our columns are separated by comma
 				var column = rows[i].split(",");
-				
-				parseFunc(column, titles, i);
+
+                //parseFunc(column, titles, i);
+                this._parseColumn(this._currLoadObj.title, column, titles, i);
 			}
 		}
 		
 		return titles;
 	}
 	
-	private _parseColumn(prop, column:Array<string>, years, i):void
+	private _parseColumn(propertyName:string, column:Array<string>, years, i):void
 	{
 		// remove row title element
 		var rowTitle:string = column.shift();				
 		var country:CountryData = this._global.countries[rowTitle];
 		
 		// skip col titles row
-		if (i != 0) 
-		{
-			if (country) 
-			{
-				var global = this._global;
-				if (!global[prop]) {
+		if (i != 0) {
+            if (country) {
+                // store summaryData per property (e.g. gdpPerCapita) on global object
+                if (!this._global[propertyName]) {
                     //global[prop] = { minYear:10000, maxYear:0, minValue:10000000000, maxValue:0 };
-                    global[prop] = new TimeData();
-				}
-				if (!global.time) {
+                    this._global[propertyName] = new OverviewData();
+                }
+                // store overview summary on global object
+                if (!this._global.overview) {
                     //global.time = { minYear:10000, maxYear:0 };
-                    global.time = new TimeData();
+                    this._global.overview = new OverviewData();
 				}
 				
 				var region = country.region;
-				if (!region[prop]) {
+				if (!region[propertyName]) {
                     //region[prop] = { minYear:10000, maxYear:0, minValue:10000000000, maxValue:0 };
-                    region[prop] = new TimeData();
+                    region[propertyName] = new OverviewData();
 				}
-				if (!region.time) {
+				if (!region.overview) {
                     //region.time = { minYear:10000, maxYear:0 };
                     //region[prop] = new TimeData();
-                    region.time = new TimeData();
+                    region.overview = new OverviewData();
 				}				
 				
-				for (var j = 0; j < column.length; j++)
-				{
+				for (var j = 0; j < column.length; j++) {
 					var value = parseFloat(column[j]);
 					if (!isNaN(value)) {
-						var year = parseInt(years[j]);
+						var year:number = parseInt(years[j]);
 						//console.log("HIV "+rowTitle+" : "+year+" : "+value);
 						
-						if (!country[prop]) {
-							country[prop] = {};
-						}
-						country[prop][year] = value;
+                        // Add property (e.g. hivPrevelance, gdpPerCapita) to country if not there
+						if (!country[propertyName]) {
+							country[propertyName] = {};
+                        }
+                        // Store the value for the given year on the countries property data in a lookup table
+						country[propertyName][year] = value;
 						
-						if (!country.time) {
+						if (!country.overview) {
                             //country.time = { minYear:10000, maxYear:0 };
-                            country.time = new TimeData();
+                            country.overview = new OverviewData();
 						}
 						
 						// set region bounds
-						this._setBounds(region[prop], year, value, country);
+						this._setBounds(region[propertyName], year, value, country);
 						// set global bounds
-						this._setBounds(global[prop], year, value, country);
+                        this._setBounds(this._global[propertyName], year, value, country);
 						
 						//set time max/min bounds for all country data
-						this._setYearBounds(country.time, year);
+						this._setYearBounds(country.overview, year);
 						//set time max/min bounds for all region data
-						this._setYearBounds(region.time, year);
+						this._setYearBounds(region.overview, year);
 						//set time max/min bounds for all global data
-						this._setYearBounds(global.time, year);
+                        this._setYearBounds(this._global.overview, year);
 					}
 				}
 			} else {
-				console.log("Entry for \""+rowTitle+"\" in Pop.csv but not in XXX.csv");
+				//console.log("Entry for \""+rowTitle+"\" in Pop.csv but not in XXX.csv");
 			}
 		}
 	}
-	
-	private _setBounds(obj:any, year:number, value:number, country:CountryData):void
+	// Extend value bounds for timeData based on latest entry
+    private _setBounds(timeData: OverviewData, year:number, value:number, country:CountryData):void
 	{
-		obj = this._setYearBounds(obj, year);
-		obj = this._setValueBounds( obj, year, value, country );
-	}
-	private _setYearBounds(obj:any, year):any
+        timeData = this._setYearBounds(timeData, year);
+        timeData = this._setValueBounds(timeData, year, value, country);
+    }
+    // Extend year boundaries for timeData based on latest entry
+	private _setYearBounds(timeData:OverviewData, year: number):OverviewData
 	{
-		if ( year > obj.maxYear )
-			obj.maxYear = year;
-		if ( year < obj.minYear )
-			obj.minYear = year;
+        if (year > timeData.maxYear)
+            timeData.maxYear = year;
+        if (year < timeData.minYear)
+            timeData.minYear = year;
 			
-		return obj;
-	}
-	private _setValueBounds( obj:any, year:number, value:number, country:CountryData )
+        return timeData;
+    }
+    // Extend value bounds for timeData based on latest entry
+    private _setValueBounds(timeData: OverviewData, year:number, value:number, country:CountryData):OverviewData
 	{
-		if ( value > obj.maxValue )
-		{
-			obj.maxValue = value;
-			obj.maxValueCountry = country;
-			obj.maxValueYear = year;
+        if (value > timeData.maxValue) {
+            timeData.maxValue = value;
+            timeData.maxValueCountry = country;
+            timeData.maxValueYear = year;
 		}
-		if ( value < obj.minValue )
-		{
-			obj.minValue = value;
-			obj.minValueCountry = country;
-			obj.minValueYear = year;
+        if (value < timeData.minValue) {
+            timeData.minValue = value;
+            timeData.minValueCountry = country;
+            timeData.minValueYear = year;
 		}
 		
-		return obj;
+        return timeData;
 	}
 	
-	public getData()
+	public getData():GlobalData
 	{
 		return this._global;
 	}

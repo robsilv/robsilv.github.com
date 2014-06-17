@@ -1,4 +1,18 @@
 //var namespace = GRAPH3D.namespace("GRAPH3D.common.ui.components");
+var AxisData = (function () {
+    function AxisData() {
+    }
+    return AxisData;
+})();
+
+var AxisState = (function () {
+    function AxisState(position, rotation) {
+        this.position = position;
+        this.rotation = rotation;
+    }
+    return AxisState;
+})();
+
 var AxisComponent = (function () {
     function AxisComponent(axisLength, defaultTextSize) {
         this._init(axisLength, defaultTextSize);
@@ -14,9 +28,6 @@ var AxisComponent = (function () {
         this._markerLineColor = 0xCCCCCC;
         this._markerLineOpacity = 1;
 
-        //
-        this.data = {};
-
         this._axisLength = axisLength;
         this._defaultTextSize = defaultTextSize;
 
@@ -26,8 +37,6 @@ var AxisComponent = (function () {
         this.titleText = null;
         this.animationValues = { lines: [], text: [], markers: [], titleText: {}, container: {} };
         this.container = new THREE.Object3D();
-
-        this.data = null; // graph data
     };
 
     AxisComponent.prototype.destroy = function () {
@@ -333,16 +342,7 @@ var AxisComponent = (function () {
     // data ===========================================
     // protected - for override
     AxisComponent.prototype._getAxisInitState = function () {
-        var state = {
-            position: new THREE.Vector3(0, 0, 0),
-            rotation: new THREE.Vector3(0, 0, 0) };
-
-        return state;
-    };
-
-    // protected - for override
-    AxisComponent.prototype._getAxisMarkerPos = function (step) {
-        return null;
+        return new AxisState(new THREE.Vector3(0, 0, 0), new THREE.Euler(0, 0, 0));
     };
 
     // protected - for override
@@ -351,12 +351,17 @@ var AxisComponent = (function () {
     };
 
     // protected - for override
-    AxisComponent.prototype._getMarkerInitAnimValues = function () {
+    AxisComponent.prototype._getTitleInitState = function (text) {
         return null;
     };
 
     // protected - for override
-    AxisComponent.prototype._getTitleInitState = function (text) {
+    AxisComponent.prototype._getAxisMarkerPos = function (step) {
+        return null;
+    };
+
+    // protected - for override
+    AxisComponent.prototype._getMarkerInitAnimValues = function () {
         return null;
     };
 

@@ -11,9 +11,12 @@ class TextLoader extends EventDispatcher {
     private _loader: XMLHttpRequest;
     private _data: string;
 		
-    constructor() {
+    constructor(url?: string) {
         super();
         this._init();
+        if (url != null) {
+            this.setUrl(url);
+        }
     }
 		
 	private _init():TextLoader {
@@ -25,11 +28,11 @@ class TextLoader extends EventDispatcher {
 		return this;
 	}
 		
-	public static create(aUrl:string):TextLoader {
-		var newTextLoader = new TextLoader();
-		newTextLoader.setUrl(aUrl);
-		return newTextLoader;
-	}
+	//public static create(aUrl:string):TextLoader {
+	//	var newTextLoader = new TextLoader();
+	//	newTextLoader.setUrl(aUrl);
+	//	return newTextLoader;
+	//}
 		
 	public getData():string {
 		return this._data;
@@ -54,8 +57,8 @@ class TextLoader extends EventDispatcher {
 	}
 		
 	private _onReadyStateChange() {
-		console.log("GRAPH3D.utils.loading.TextLoader::_onReadyStateChange");
-		console.log(this._url, this._loader.readyState, this._loader.status);
+		//console.log("GRAPH3D.utils.loading.TextLoader::_onReadyStateChange");
+		//console.log(this._url, this._loader.readyState, this._loader.status);
 		switch(this._loader.readyState) {
 			case 0: //Uninitialized
 			case 1: //Set up

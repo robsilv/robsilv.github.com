@@ -12,6 +12,9 @@ var GlobalData = (function () {
     return GlobalData;
 })();
 
+// Data dynamically added to CountryData in a lookup table as follows:
+// country[propertyName][year] = value;
+// ..where propertyName == gdpPerCapita, hivPrevelance, etc.
 var CountryData = (function () {
     function CountryData(name, region) {
         this.name = name;
@@ -28,8 +31,13 @@ var RegionData = (function () {
     return RegionData;
 })();
 
-var TimeData = (function () {
-    function TimeData(minYear, maxYear, minValue, maxValue) {
+// USED FOR CLIPPING AXES (min & max values)
+// Stores:
+// - The time range for a given property
+// - The max & min values for the property
+// - The countries which hold the max & min values
+var OverviewData = (function () {
+    function OverviewData(minYear, maxYear, minValue, maxValue) {
         if (typeof minYear === "undefined") { minYear = 10000; }
         if (typeof maxYear === "undefined") { maxYear = 0; }
         if (typeof minValue === "undefined") { minValue = 10000000000; }
@@ -39,27 +47,42 @@ var TimeData = (function () {
         this.minValue = minValue;
         this.maxValue = maxValue;
     }
-    return TimeData;
+    return OverviewData;
 })();
 
 var DataModel = (function (_super) {
     __extends(DataModel, _super);
     function DataModel() {
+        var _this = this;
         _super.call(this);
+        // Callback
+        this._regionsLoaded = function (aEvent) {
+            var data = _this._csvLoader.getData();
+
+            //console.log("REGIONS LOADER DATA "+data);
+            _this._parseRegions(data);
+
+            _this._loadNext();
+        };
+        // Callback
+        this._tableLoaded = function (aEvent) {
+            var data = _this._csvLoader.getData();
+
+            //console.log("POPULATIONS LOADER DATA "+data);
+            //TODO: Remove this JS style scope weirdness
+            var scope = _this;
+            _this._parseTable(data); //, function (column, years, i) { scope._parseColumn(scope._currLoadObj.title, column, years, i) });
+
+            _this._loadNext();
+        };
         this._init();
     }
-    DataModel.create = function () {
-        var newInstance = new DataModel();
-        return newInstance;
-    };
-
     DataModel.prototype._init = function () {
         //this._global = { regions:[], countries:{} };
         this._global = new GlobalData();
 
-        this._regionsLoadedCallback = ListenerFunctions.createListenerFunction(this, this._regionsLoaded);
-        this._tableLoadedCallback = ListenerFunctions.createListenerFunction(this, this._tableLoaded);
-
+        //this._regionsLoadedCallback = ListenerFunctions.createListenerFunction(this, this._regionsLoaded);
+        //this._tableLoadedCallback = ListenerFunctions.createListenerFunction(this, this._tableLoaded);
         this._regionsUrl = "../../files/data/Geographic_Regions.csv";
 
         this._loadNum = 0;
@@ -80,49 +103,30 @@ var DataModel = (function (_super) {
     };
 
     DataModel.prototype._createLoader = function (url, callBack) {
-        var newLoader = TextLoader.create(url);
+        var newLoader = new TextLoader(url);
         newLoader.addEventListener(TextLoader.LOADED, callBack); //, false);
 
         return newLoader;
     };
 
+    // Called on init - Loads regions first
     DataModel.prototype.load = function () {
-        this._csvLoader = this._createLoader(this._regionsUrl, this._regionsLoadedCallback);
+        this._csvLoader = this._createLoader(this._regionsUrl, this._regionsLoaded);
         this._csvLoader.load();
     };
 
-    DataModel.prototype._regionsLoaded = function (aEvent) {
-        var data = this._csvLoader.getData();
-
-        //console.log("REGIONS LOADER DATA "+data);
-        this._parseRegions(data);
-
-        this._loadNext();
-    };
-
+    // Called for subsequent loads - all loads are tables
     DataModel.prototype._loadNext = function () {
         this._currLoadObj = this._loadQueue[this._loadNum];
 
         if (this._loadNum < this._loadQueue.length) {
             this._loadNum++;
 
-            this._csvLoader = this._createLoader(this._currLoadObj.url, this._tableLoadedCallback);
+            this._csvLoader = this._createLoader(this._currLoadObj.url, this._tableLoaded);
             this._csvLoader.load();
         } else {
             this.dispatchEvent({ type: "loadComplete" });
         }
-    };
-
-    DataModel.prototype._tableLoaded = function (aEvent) {
-        var data = this._csvLoader.getData();
-
-        //console.log("POPULATIONS LOADER DATA "+data);
-        var scope = this;
-        this._parseTable(data, function (column, years, i) {
-            scope._parseColumn(scope._currLoadObj.title, column, years, i);
-        });
-
-        this._loadNext();
     };
 
     DataModel.prototype._cleanData = function (data) {
@@ -135,6 +139,7 @@ var DataModel = (function (_super) {
         return data;
     };
 
+    // Add countries to regions
     DataModel.prototype._parseRegions = function (data) {
         data = this._cleanData(data);
 
@@ -152,7 +157,7 @@ var DataModel = (function (_super) {
         for (var i = 0; i < rows.length; i++) {
             // this line helps to skip empty rows
             if (rows[i]) {
-                // our columns are separated by comma
+                // columns are separated by commas
                 var column = rows[i].split(",");
 
                 // skip col titles row
@@ -168,7 +173,7 @@ var DataModel = (function (_super) {
                                 this._global.countries[country] = countryObj;
                             }
                         } else {
-                            console.log("NO REGION " + j + " country " + column[j]);
+                            //console.log("NO REGION "+j+" country "+column[j]);
                         }
                     }
                 }
@@ -176,7 +181,7 @@ var DataModel = (function (_super) {
         }
     };
 
-    DataModel.prototype._parseTable = function (data, parseFunc) {
+    DataModel.prototype._parseTable = function (data) {
         data = this._cleanData(data);
 
         //split into rows
@@ -194,22 +199,21 @@ var DataModel = (function (_super) {
             titles.push(column[i]);
         }
 
-        console.log("Column Titles " + titles);
-
         for (var i = 0; i < rows.length; i++) {
             // this line helps to skip empty rows
             if (rows[i]) {
                 // our columns are separated by comma
                 var column = rows[i].split(",");
 
-                parseFunc(column, titles, i);
+                //parseFunc(column, titles, i);
+                this._parseColumn(this._currLoadObj.title, column, titles, i);
             }
         }
 
         return titles;
     };
 
-    DataModel.prototype._parseColumn = function (prop, column, years, i) {
+    DataModel.prototype._parseColumn = function (propertyName, column, years, i) {
         // remove row title element
         var rowTitle = column.shift();
         var country = this._global.countries[rowTitle];
@@ -217,25 +221,27 @@ var DataModel = (function (_super) {
         // skip col titles row
         if (i != 0) {
             if (country) {
-                var global = this._global;
-                if (!global[prop]) {
+                // store summaryData per property (e.g. gdpPerCapita) on global object
+                if (!this._global[propertyName]) {
                     //global[prop] = { minYear:10000, maxYear:0, minValue:10000000000, maxValue:0 };
-                    global[prop] = new TimeData();
+                    this._global[propertyName] = new OverviewData();
                 }
-                if (!global.time) {
+
+                // store overview summary on global object
+                if (!this._global.overview) {
                     //global.time = { minYear:10000, maxYear:0 };
-                    global.time = new TimeData();
+                    this._global.overview = new OverviewData();
                 }
 
                 var region = country.region;
-                if (!region[prop]) {
+                if (!region[propertyName]) {
                     //region[prop] = { minYear:10000, maxYear:0, minValue:10000000000, maxValue:0 };
-                    region[prop] = new TimeData();
+                    region[propertyName] = new OverviewData();
                 }
-                if (!region.time) {
+                if (!region.overview) {
                     //region.time = { minYear:10000, maxYear:0 };
                     //region[prop] = new TimeData();
-                    region.time = new TimeData();
+                    region.overview = new OverviewData();
                 }
 
                 for (var j = 0; j < column.length; j++) {
@@ -244,63 +250,71 @@ var DataModel = (function (_super) {
                         var year = parseInt(years[j]);
 
                         //console.log("HIV "+rowTitle+" : "+year+" : "+value);
-                        if (!country[prop]) {
-                            country[prop] = {};
+                        // Add property (e.g. hivPrevelance, gdpPerCapita) to country if not there
+                        if (!country[propertyName]) {
+                            country[propertyName] = {};
                         }
-                        country[prop][year] = value;
 
-                        if (!country.time) {
+                        // Store the value for the given year on the countries property data in a lookup table
+                        country[propertyName][year] = value;
+
+                        if (!country.overview) {
                             //country.time = { minYear:10000, maxYear:0 };
-                            country.time = new TimeData();
+                            country.overview = new OverviewData();
                         }
 
                         // set region bounds
-                        this._setBounds(region[prop], year, value, country);
+                        this._setBounds(region[propertyName], year, value, country);
 
                         // set global bounds
-                        this._setBounds(global[prop], year, value, country);
+                        this._setBounds(this._global[propertyName], year, value, country);
 
                         //set time max/min bounds for all country data
-                        this._setYearBounds(country.time, year);
+                        this._setYearBounds(country.overview, year);
 
                         //set time max/min bounds for all region data
-                        this._setYearBounds(region.time, year);
+                        this._setYearBounds(region.overview, year);
 
                         //set time max/min bounds for all global data
-                        this._setYearBounds(global.time, year);
+                        this._setYearBounds(this._global.overview, year);
                     }
                 }
             } else {
-                console.log("Entry for \"" + rowTitle + "\" in Pop.csv but not in XXX.csv");
+                //console.log("Entry for \""+rowTitle+"\" in Pop.csv but not in XXX.csv");
             }
         }
     };
 
-    DataModel.prototype._setBounds = function (obj, year, value, country) {
-        obj = this._setYearBounds(obj, year);
-        obj = this._setValueBounds(obj, year, value, country);
+    // Extend value bounds for timeData based on latest entry
+    DataModel.prototype._setBounds = function (timeData, year, value, country) {
+        timeData = this._setYearBounds(timeData, year);
+        timeData = this._setValueBounds(timeData, year, value, country);
     };
-    DataModel.prototype._setYearBounds = function (obj, year) {
-        if (year > obj.maxYear)
-            obj.maxYear = year;
-        if (year < obj.minYear)
-            obj.minYear = year;
 
-        return obj;
+    // Extend year boundaries for timeData based on latest entry
+    DataModel.prototype._setYearBounds = function (timeData, year) {
+        if (year > timeData.maxYear)
+            timeData.maxYear = year;
+        if (year < timeData.minYear)
+            timeData.minYear = year;
+
+        return timeData;
     };
-    DataModel.prototype._setValueBounds = function (obj, year, value, country) {
-        if (value > obj.maxValue) {
-            obj.maxValue = value;
-            obj.maxValueCountry = country;
-            obj.maxValueYear = year;
+
+    // Extend value bounds for timeData based on latest entry
+    DataModel.prototype._setValueBounds = function (timeData, year, value, country) {
+        if (value > timeData.maxValue) {
+            timeData.maxValue = value;
+            timeData.maxValueCountry = country;
+            timeData.maxValueYear = year;
         }
-        if (value < obj.minValue) {
-            obj.minValue = value;
-            obj.minValueCountry = country;
-            obj.minValueYear = year;
+        if (value < timeData.minValue) {
+            timeData.minValue = value;
+            timeData.minValueCountry = country;
+            timeData.minValueYear = year;
         }
 
-        return obj;
+        return timeData;
     };
 
     DataModel.prototype.getData = function () {

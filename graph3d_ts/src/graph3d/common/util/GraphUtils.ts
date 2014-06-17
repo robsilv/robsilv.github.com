@@ -6,7 +6,7 @@
             return newInstance;
         }
 
-        public mapToAxisLinear(minVal:number, maxVal:number, numSteps:number, forceInt:boolean):Object {
+        public mapToAxisLinear(minVal:number, maxVal:number, numSteps:number, forceInt:boolean):AxisData {
             var diff:number = maxVal - minVal;
             var stepSize:number = diff / numSteps;
 
@@ -54,18 +54,25 @@
                 if (stepVal >= maxVal) {
                     maxNumSteps = i;
                     finalMaxVal = stepVal;
-                    console.log("maxStep " + stepVal + " finalMaxVal " + finalMaxVal + " i " + i);
+                   // console.log("maxStep " + stepVal + " finalMaxVal " + finalMaxVal + " i " + i);
                     break;
                 }
             }
 
-            console.log("minVal " + minVal + " maxVal " + maxVal + " numSteps " + maxNumSteps + " stepSize " + stepSize);
+            //console.log("minVal " + minVal + " maxVal " + maxVal + " numSteps " + maxNumSteps + " stepSize " + stepSize);
 
-            return { minVal: graphMinVal, maxVal: finalMaxVal, stepSize: stepSize, numSteps: maxNumSteps };
+            var axisData: AxisData = new AxisData();
+            axisData.minVal = graphMinVal;
+            axisData.maxVal = finalMaxVal;
+            axisData.stepSize = stepSize;
+            axisData.numSteps = maxNumSteps;
+
+            return axisData;
+            //return { minVal: graphMinVal, maxVal: finalMaxVal, stepSize: stepSize, numSteps: maxNumSteps };
         }
 
 		// TODO: numFractionalSteps can be determined by comparing the minVal to Math.pow(1/base, n)
-        public mapToAxisLogarithmic(minVal: number, maxVal: number, numFractionalSteps: number, base) {
+        public mapToAxisLogarithmic(minVal: number, maxVal: number, numFractionalSteps: number, base :number):AxisData {
             var diff = maxVal - minVal;
 
             var numLogSteps = this.getLogOfBase(diff, base);
@@ -97,7 +104,18 @@
 
             var numSteps = numLogSteps + numFractionalSteps;
 
-            return { minVal: graphMinVal, maxVal: finalMaxVal, numSteps: numSteps, logarithmic: true, numLogSteps: numLogSteps, numFractionalSteps: numFractionalSteps, base: base, baseLog: baseLog };
+            var axisData: AxisData = new AxisData();
+            axisData.minVal = graphMinVal;
+            axisData.maxVal = finalMaxVal;
+            axisData.numSteps = numSteps;
+            axisData.logarithmic = true;
+            axisData.numLogSteps = numLogSteps;
+            axisData.numFractionalSteps = numFractionalSteps;
+            axisData.base = base;
+            axisData.baseLog = baseLog;
+
+            return axisData;
+            //return { minVal: graphMinVal, maxVal: finalMaxVal, numSteps: numSteps, logarithmic: true, numLogSteps: numLogSteps, numFractionalSteps: numFractionalSteps, base: base, baseLog: baseLog };
         }
 		
         public getLogOfBase(val: number, base: number, debug?:boolean):number {

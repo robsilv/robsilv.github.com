@@ -4,8 +4,8 @@
 
 var Example1 = (function () {
     function Example1() {
-        var graphView = GraphView.create();
-        var dataModel = DataModel.create();
+        var graphView = new GraphView();
+        var dataModel = new DataModel();
         dataModel.addEventListener("loadComplete", function () {
             graphView.setDataProvider(dataModel.getData());
         });
